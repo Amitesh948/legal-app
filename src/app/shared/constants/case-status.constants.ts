@@ -1,0 +1,43 @@
+export enum CaseStatus {
+  NEW = 'NEW',
+  PAYMENT_PENDING = 'PAYMENT_PENDING',
+  PAYMENT_COMPLETED = 'PAYMENT_COMPLETED',
+  PENDING_ASSIGNMENT = 'PENDING_ASSIGNMENT',
+  ADVOCATE_ASSIGNED = 'ADVOCATE_ASSIGNED',
+  DOCUMENTS_UPLOADED = 'DOCUMENTS_UPLOADED',
+  AI_PROCESSING = 'AI_PROCESSING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  DOCUMENTS_UNDER_REVIEW = 'DOCUMENTS_UNDER_REVIEW',
+  INFORMATION_REQUIRED = 'INFORMATION_REQUIRED',
+  LEGAL_REVIEW = 'LEGAL_REVIEW',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  LEGAL_OPINION_DRAFT = 'LEGAL_OPINION_DRAFT',
+  LEGAL_OPINION_SUBMITTED = 'LEGAL_OPINION_SUBMITTED',
+  OPINION_GENERATED = 'OPINION_GENERATED',
+  REPORT_GENERATED = 'REPORT_GENERATED',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+  CLOSED = 'CLOSED'
+}
+
+export const CASE_STATUS_LABELS: Record<string, string> = {
+  [CaseStatus.NEW]: 'New',
+  [CaseStatus.PAYMENT_PENDING]: 'Payment Pending',
+  [CaseStatus.PAYMENT_COMPLETED]: 'Payment Completed',
+  [CaseStatus.PENDING_ASSIGNMENT]: 'Pending Assignment',
+  [CaseStatus.ADVOCATE_ASSIGNED]: 'Assigned',
+  [CaseStatus.DOCUMENTS_UPLOADED]: 'Documents Uploaded',
+  [CaseStatus.AI_PROCESSING]: 'AI Processing',
+  [CaseStatus.IN_PROGRESS]: 'In Progress',
+  [CaseStatus.DOCUMENTS_UNDER_REVIEW]: 'Documents Under Review',
+  [CaseStatus.INFORMATION_REQUIRED]: 'Information Required',
+  [CaseStatus.LEGAL_REVIEW]: 'Legal Review',
+  [CaseStatus.UNDER_REVIEW]: 'Under Review',
+  [CaseStatus.LEGAL_OPINION_DRAFT]: 'Opinion Draft',
+  [CaseStatus.LEGAL_OPINION_SUBMITTED]: 'Opinion Submitted',
+  [CaseStatus.OPINION_GENERATED]: 'Opinion Generated',
+  [CaseStatus.REPORT_GENERATED]: 'Report Generated',
+  [CaseStatus.COMPLETED]: 'Completed',
+  [CaseStatus.CANCELLED]: 'Cancelled',
+  [CaseStatus.CLOSED]: 'Closed'
+};

@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CaseStatus, CASE_STATUS_LABELS } from '../../constants/case-status.constants';
 
 @Component({
   selector: 'app-case-card',
@@ -19,13 +20,36 @@ export class CaseCardComponent {
   
   @Output() cardClick = new EventEmitter<void>();
 
+  get statusLabel(): string {
+    return CASE_STATUS_LABELS[this.status as CaseStatus] || this.status;
+  }
+
   get statusClass(): string {
-    const s = this.status?.toLowerCase() || '';
-    if (s === 'open' || s === 'active') return 'badge-info';
-    if (s === 'pending' || s === 'in review') return 'badge-warning';
-    if (s === 'closed' || s === 'completed') return 'badge-success';
-    if (s === 'urgent' || s === 'overdue') return 'badge-danger';
-    return 'badge-gray';
+    switch (this.status as CaseStatus) {
+      case CaseStatus.NEW:
+      case CaseStatus.AI_PROCESSING:
+      case CaseStatus.DOCUMENTS_UPLOADED:
+        return 'badge-info';
+      case CaseStatus.IN_PROGRESS:
+      case CaseStatus.ADVOCATE_ASSIGNED:
+      case CaseStatus.LEGAL_REVIEW:
+      case CaseStatus.UNDER_REVIEW:
+        return 'badge-brand';
+      case CaseStatus.PAYMENT_PENDING:
+      case CaseStatus.PENDING_ASSIGNMENT:
+      case CaseStatus.INFORMATION_REQUIRED:
+        return 'badge-warning';
+      case CaseStatus.COMPLETED:
+      case CaseStatus.PAYMENT_COMPLETED:
+      case CaseStatus.REPORT_GENERATED:
+      case CaseStatus.OPINION_GENERATED:
+        return 'badge-success';
+      case CaseStatus.CANCELLED:
+      case CaseStatus.CLOSED:
+        return 'badge-danger';
+      default:
+        return 'badge-gray';
+    }
   }
 
   onClick(): void {

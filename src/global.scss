@@ -321,7 +321,8 @@ a:hover {
   color: var(--color-text-disabled);
 }
 
-.form-field ion-input {
+.form-field ion-input,
+.form-field ion-textarea {
   --background: var(--color-surface);
   --color: var(--color-text-primary);
   --placeholder-color: var(--color-text-disabled);
@@ -337,7 +338,8 @@ a:hover {
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.02) inset;
 }
 
-.form-field ion-input:focus-within {
+.form-field ion-input:focus-within,
+.form-field ion-textarea:focus-within {
   border-color: var(--brand-500);
   box-shadow: 0 0 0 3px var(--color-focus-ring);
 }

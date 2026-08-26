@@ -7,6 +7,7 @@ import { CaseCardComponent } from '../../../shared/components/case-card/case-car
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { CaseStatus, CASE_STATUS_LABELS } from '../../../shared/constants/case-status.constants';
 
 @Component({
   selector: 'app-client-cases',
@@ -31,8 +32,14 @@ export class ClientCasesPage implements OnInit {
   cases: any[] = [];
   loading = true;
   error = false;
+  loadMoreError = false;
   
-  filters = ['All', 'New', 'In Progress', 'Completed'];
+  filters = [
+    { label: 'All', value: 'All' },
+    { label: CASE_STATUS_LABELS[CaseStatus.NEW], value: CaseStatus.NEW },
+    { label: CASE_STATUS_LABELS[CaseStatus.IN_PROGRESS], value: CaseStatus.IN_PROGRESS },
+    { label: CASE_STATUS_LABELS[CaseStatus.COMPLETED], value: CaseStatus.COMPLETED }
+  ];
   activeFilter = 'All';
   
   page = 1;
@@ -48,21 +55,12 @@ export class ClientCasesPage implements OnInit {
     this.loadCases();
   }
 
-  setFilter(filter: string) {
-    this.activeFilter = filter;
+  setFilter(filterValue: string) {
+    this.activeFilter = filterValue;
     this.page = 1;
     this.cases = [];
     this.hasMore = true;
     this.loadCases();
-  }
-
-  private getStatusForApi(filter: string): string {
-    switch (filter) {
-      case 'New': return 'NEW';
-      case 'In Progress': return 'IN_PROGRESS';
-      case 'Completed': return 'COMPLETED';
-      default: return '';
-    }
   }
 
   loadCases(event?: any, isLoadMore = false) {
@@ -70,10 +68,11 @@ export class ClientCasesPage implements OnInit {
       this.loading = true;
       this.error = false;
     }
+    this.loadMoreError = false;
 
     let url = `/cases?page=${this.page}&limit=10`;
     if (this.activeFilter !== 'All') {
-      url += `&status=${this.getStatusForApi(this.activeFilter)}`;
+      url += `&status=${this.activeFilter}`;
     }
 
     this.api.get<any>(url)
@@ -101,6 +100,8 @@ export class ClientCasesPage implements OnInit {
           if (!isLoadMore) {
             this.loading = false;
             this.error = true;
+          } else {
+            this.loadMoreError = true;
           }
           if (event) event.target.complete();
           this.cdr.detectChanges();

@@ -97,6 +97,11 @@
     background: var(--brand-50);
   }
 
+  &:focus-visible {
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+
   &.selected {
     border-color: var(--brand-500);
     background: var(--brand-50);
@@ -125,7 +130,6 @@
   text-align: center;
 }
 
-/* File Upload */
 .file-upload-box {
   display: flex;
   flex-direction: column;
@@ -142,6 +146,23 @@
     border-color: var(--brand-500);
     background: var(--brand-50);
   }
+}
+
+.sr-only-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-input:focus-visible + .file-upload-box {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
 .action-bar {
