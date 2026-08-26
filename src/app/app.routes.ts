@@ -43,8 +43,23 @@ export const routes: Routes = [
       },
       {
         path: 'cases',
-        loadComponent: () =>
-          import('./features/client/cases/client-cases.page').then(m => m.ClientCasesPage)
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/client/cases/client-cases.page').then(m => m.ClientCasesPage)
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import('./features/client/cases/new-case/new-case.page').then(m => m.NewCasePage)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/client/cases/case-detail/case-detail.page').then(m => m.ClientCaseDetailPage)
+          }
+        ]
       },
       {
         path: 'messages',
@@ -78,8 +93,18 @@ export const routes: Routes = [
       },
       {
         path: 'cases',
-        loadComponent: () =>
-          import('./features/advocate/cases/advocate-cases.page').then(m => m.AdvocateCasesPage)
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/advocate/cases/advocate-cases.page').then(m => m.AdvocateCasesPage)
+          },
+          {
+            path: ':id',
+            loadComponent: () =>
+              import('./features/advocate/cases/case-detail/case-detail.page').then(m => m.AdvocateCaseDetailPage)
+          }
+        ]
       },
       {
         path: 'messages',

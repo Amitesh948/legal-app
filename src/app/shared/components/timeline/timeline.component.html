@@ -1,0 +1,17 @@
+<div class="timeline">
+  <div class="timeline-empty text-center p-6" *ngIf="!events || events.length === 0">
+    <p class="text-muted fs-sm">No history available for this case.</p>
+  </div>
+  
+  <div class="timeline-item" *ngFor="let event of events; let last = last">
+    <div class="timeline-rail">
+      <div class="timeline-dot" [ngClass]="getDotClass(event.type)"></div>
+      <div class="timeline-line" *ngIf="!last"></div>
+    </div>
+    <div class="timeline-content" [class.pb-5]="!last">
+      <h5 class="timeline-title fw-bold text-primary m-0">{{ event.title }}</h5>
+      <p class="timeline-desc text-secondary fs-sm mt-1 mb-2">{{ event.description }}</p>
+      <span class="timeline-time text-muted fs-xs">{{ event.timestamp | date:'medium' }}</span>
+    </div>
+  </div>
+</div>

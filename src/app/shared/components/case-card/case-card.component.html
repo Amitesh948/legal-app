@@ -1,0 +1,24 @@
+<div class="case-card card-interactive" (click)="onClick()" tabindex="0" role="button" aria-label="View case details">
+  <div class="case-card__header">
+    <h4 class="case-title text-primary fw-bold">{{ title }}</h4>
+    <span class="badge {{ statusClass }}">{{ status }}</span>
+  </div>
+  
+  <div class="case-card__meta mt-1">
+    <span class="text-secondary fs-sm">{{ practiceArea }}</span>
+    <span class="meta-dot"></span>
+    <span class="text-muted fs-sm">Ref: {{ referenceNumber }}</span>
+  </div>
+
+  <div class="case-card__footer mt-3">
+    <div class="d-flex align-center gap-2">
+      <svg class="text-muted" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <span class="text-muted fs-xs">Updated {{ lastUpdated | date:'mediumDate' }}</span>
+    </div>
+    
+    <div class="unread-indicator" *ngIf="hasUnreadMessages" title="Unread messages"></div>
+  </div>
+</div>

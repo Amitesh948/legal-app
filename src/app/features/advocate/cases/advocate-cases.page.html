@@ -1,9 +1,56 @@
-<div class="page-container">
-      <div class="section">
-        <h2 class="mb-2">Assigned Cases</h2>
-        <p>Manage cases assigned to you.</p>
-      </div>
-      <div class="surface mt-6 p-6 text-center text-muted">
-        Advocate case directory feature is coming in Sprint 3.
-      </div>
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-container">
+    <div class="d-flex align-center j-between mb-6">
+      <h2 class="m-0">Assigned Cases</h2>
     </div>
+
+    <!-- Segment Control -->
+    <div class="segment-control mb-6">
+      <button 
+        *ngFor="let filter of filters" 
+        class="segment-btn" 
+        [class.active]="activeFilter === filter"
+        (click)="setFilter(filter)">
+        {{ filter }}
+      </button>
+    </div>
+
+    <!-- State: Loading -->
+    <app-skeleton-loader *ngIf="loading"></app-skeleton-loader>
+
+    <!-- State: Error -->
+    <app-error-state *ngIf="!loading && error" (retry)="loadCases()"></app-error-state>
+
+    <!-- State: Empty -->
+    <app-empty-state 
+      *ngIf="!loading && !error && cases.length === 0"
+      title="No Cases Found"
+      message="You don't have any cases assigned in this status.">
+    </app-empty-state>
+
+    <!-- State: Data -->
+    <div class="case-list" *ngIf="!loading && !error && cases.length > 0">
+      <app-case-card 
+        *ngFor="let caseItem of cases"
+        [caseId]="caseItem.id"
+        [title]="caseItem.title || 'Untitled Case'"
+        [status]="caseItem.status"
+        [practiceArea]="caseItem.practice_area?.name || 'General Legal'"
+        [referenceNumber]="caseItem.reference_number || caseItem.id"
+        [lastUpdated]="caseItem.updated_at || caseItem.created_at"
+        [hasUnreadMessages]="caseItem.unread_messages > 0"
+        (cardClick)="goToDetail(caseItem.id)">
+      </app-case-card>
+    </div>
+
+    <!-- Infinite Scroll -->
+    <ion-infinite-scroll *ngIf="!loading && !error && cases.length > 0" (ionInfinite)="loadMore($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    
+  </div>
+</ion-content>

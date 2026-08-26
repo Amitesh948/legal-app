@@ -1,0 +1,113 @@
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- State: Loading -->
+  <div class="page-container" *ngIf="loading">
+    <app-skeleton-loader></app-skeleton-loader>
+  </div>
+
+  <!-- State: Error -->
+  <div class="page-container" *ngIf="!loading && error">
+    <app-error-state (retry)="loadCaseDetails()"></app-error-state>
+  </div>
+
+  <!-- State: Data -->
+  <div class="page-container case-detail-container" *ngIf="!loading && !error && caseData">
+    
+    <!-- Header -->
+    <div class="case-header mb-6">
+      <button class="btn btn-ghost p-0 mb-4" (click)="goBack()" aria-label="Go back">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        <span class="ms-2">Back to Cases</span>
+      </button>
+
+      <div class="d-flex align-center j-between gap-3 mb-2">
+        <h2 class="m-0 case-title">{{ caseData.title }}</h2>
+        <span class="badge {{ statusClass }}">{{ caseData.status }}</span>
+      </div>
+      
+      <div class="d-flex align-center gap-2 text-secondary fs-sm">
+        <span>{{ caseData.practice_area?.name || 'General Legal' }}</span>
+        <span class="meta-dot"></span>
+        <span>Ref: {{ caseData.reference_number || caseData.id }}</span>
+      </div>
+    </div>
+
+    <!-- Custom Tab Bar -->
+    <div class="custom-tabs mb-6">
+      <div class="tab-items">
+        <button 
+          *ngFor="let tab of tabs" 
+          class="tab-btn" 
+          [class.active]="activeTab === tab"
+          (click)="setTab(tab)">
+          {{ tab }}
+        </button>
+      </div>
+      <!-- CSS handles the sliding indicator logic in SCSS using sibling combinators if possible, 
+           but it's easier to use a relative wrapper and absolute indicator in Angular -->
+      <div class="tab-indicator" [attr.data-active-index]="tabs.indexOf(activeTab)"></div>
+    </div>
+
+    <!-- TABS CONTENT -->
+    
+    <!-- OVERVIEW TAB -->
+    <div *ngIf="activeTab === 'Overview'" class="tab-content">
+      <div class="card mb-6 p-0 overflow-hidden">
+        <div class="kv-row">
+          <span class="kv-label">Client Name</span>
+          <span class="kv-value fw-medium">{{ caseData.client?.name || 'You' }}</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Advocate Assigned</span>
+          <span class="kv-value fw-medium">{{ caseData.advocate?.name || 'Not yet assigned' }}</span>
+        </div>
+        <div class="kv-row">
+          <span class="kv-label">Date Opened</span>
+          <span class="kv-value">{{ caseData.created_at | date:'longDate' }}</span>
+        </div>
+        <div class="kv-row flex-column align-start gap-2 border-0">
+          <span class="kv-label">Description</span>
+          <p class="fs-sm m-0" style="white-space: pre-wrap;">{{ caseData.description }}</p>
+        </div>
+      </div>
+
+      <h4 class="mb-4">Case Timeline</h4>
+      <div class="card bg-gray-50 border-0">
+        <app-timeline [events]="timelineEvents"></app-timeline>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS TAB -->
+    <div *ngIf="activeTab === 'Documents'" class="tab-content">
+      <app-empty-state 
+        title="No Documents"
+        message="Documents related to this case will appear here."
+        icon="document">
+      </app-empty-state>
+    </div>
+
+    <!-- MESSAGES TAB -->
+    <div *ngIf="activeTab === 'Messages'" class="tab-content">
+      <app-empty-state 
+        title="No Messages"
+        message="Start a conversation with your advocate here."
+        icon="chatbubble">
+      </app-empty-state>
+    </div>
+
+    <!-- OPINIONS TAB -->
+    <div *ngIf="activeTab === 'Opinions'" class="tab-content">
+      <app-empty-state 
+        title="No Legal Opinions"
+        message="Formal legal opinions delivered by your advocate will be listed here."
+        icon="newspaper">
+      </app-empty-state>
+    </div>
+
+  </div>
+</ion-content>

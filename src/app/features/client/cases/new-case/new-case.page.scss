@@ -1,0 +1,173 @@
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  position: relative;
+  z-index: 2;
+}
+
+.step-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  color: var(--color-text-disabled);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  transition: all var(--transition-base);
+}
+
+.step-label {
+  font-size: 11px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all var(--transition-base);
+}
+
+.step.active .step-circle {
+  border-color: var(--brand-500);
+  background: var(--brand-500);
+  color: var(--color-surface);
+  box-shadow: 0 0 0 4px var(--brand-50);
+}
+
+.step.active .step-label {
+  color: var(--brand-700);
+}
+
+.step.completed .step-circle {
+  border-color: var(--brand-500);
+  background: var(--brand-50);
+  color: var(--brand-500);
+}
+
+.step.completed .step-label {
+  color: var(--brand-500);
+}
+
+.step-line {
+  flex-grow: 1;
+  height: 2px;
+  background: var(--color-border);
+  margin-top: -20px;
+  z-index: 1;
+  transition: all var(--transition-base);
+}
+
+.step-line.active {
+  background: var(--brand-500);
+}
+
+/* Practice Grid */
+.practice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.practice-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+
+  &:hover {
+    border-color: var(--brand-300);
+    background: var(--brand-50);
+  }
+
+  &.selected {
+    border-color: var(--brand-500);
+    background: var(--brand-50);
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+
+  &.selected .practice-card__icon {
+    color: var(--brand-500);
+  }
+
+  &.selected .practice-card__name {
+    color: var(--brand-700);
+    font-weight: var(--font-weight-bold);
+  }
+}
+
+.practice-card__icon {
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.practice-card__name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  text-align: center;
+}
+
+/* File Upload */
+.file-upload-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  background: var(--color-bg);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover {
+    border-color: var(--brand-500);
+    background: var(--brand-50);
+  }
+}
+
+.action-bar {
+  display: flex;
+  gap: var(--space-4);
+  background: var(--color-bg);
+  padding: var(--space-4) 0 0;
+  margin-top: var(--space-8);
+}
+
+.sticky-bottom {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+}
+
+.alert--danger {
+  background: var(--status-danger-bg);
+  color: var(--status-danger-text);
+  border: 1px solid #FECACA;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
