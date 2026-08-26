@@ -37,15 +37,30 @@ export const routes: Routes = [
     data: { roles: ['client'] },
     children: [
       {
-        path: '',
+        path: 'home',
         loadComponent: () =>
           import('./features/client/dashboard/client-dashboard.page').then(m => m.ClientDashboardPage)
       },
-      // Future Sprint routes will be added here:
-      // { path: 'cases', ... },
-      // { path: 'cases/:id', ... },
-      // { path: 'documents', ... },
-      // { path: 'profile', ... },
+      {
+        path: 'cases',
+        loadComponent: () =>
+          import('./features/client/cases/client-cases.page').then(m => m.ClientCasesPage)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/client/messages/client-messages.page').then(m => m.ClientMessagesPage)
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/client/profile/client-profile.page').then(m => m.ClientProfilePage)
+      },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+      }
     ]
   },
 
@@ -57,15 +72,35 @@ export const routes: Routes = [
     data: { roles: ['advocate'] },
     children: [
       {
-        path: '',
+        path: 'home',
         loadComponent: () =>
           import('./features/advocate/dashboard/advocate-dashboard.page').then(m => m.AdvocateDashboardPage)
       },
-      // Future Sprint routes will be added here:
-      // { path: 'cases', ... },
-      // { path: 'cases/:id', ... },
-      // { path: 'opinions', ... },
-      // { path: 'profile', ... },
+      {
+        path: 'cases',
+        loadComponent: () =>
+          import('./features/advocate/cases/advocate-cases.page').then(m => m.AdvocateCasesPage)
+      },
+      {
+        path: 'messages',
+        loadComponent: () =>
+          import('./features/advocate/messages/advocate-messages.page').then(m => m.AdvocateMessagesPage)
+      },
+      {
+        path: 'opinions',
+        loadComponent: () =>
+          import('./features/advocate/opinions/advocate-opinions.page').then(m => m.AdvocateOpinionsPage)
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/advocate/profile/advocate-profile.page').then(m => m.AdvocateProfilePage)
+      },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+      }
     ]
   },
 

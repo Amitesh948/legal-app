@@ -1,0 +1,191 @@
+<div class="page-container pull-to-refresh">
+
+  <!-- Loading & Error -->
+  <app-skeleton-loader *ngIf="loading"></app-skeleton-loader>
+  <app-error-state *ngIf="!loading && error" (retry)="loadProfile()"></app-error-state>
+
+  <div *ngIf="!loading && !error && fullProfile" class="profile-content">
+    
+    <!-- ── Profile Header ── -->
+    <div class="profile-header">
+      <div class="profile-header__avatar">
+        <app-avatar
+          [firstName]="fullProfile.user.first_name || ''"
+          [lastName]="fullProfile.user.last_name || ''"
+          [size]="88">
+        </app-avatar>
+      </div>
+      <div class="profile-header__info">
+        <h2 class="profile-header__name">
+          Adv. {{ fullProfile.user.first_name }} {{ fullProfile.user.last_name }}
+        </h2>
+        <p class="profile-header__role">{{ fullProfile.profile?.designation || 'Legal Professional' }}</p>
+        
+        <div class="mt-2" *ngIf="fullProfile.user.status">
+          <span class="badge" [ngClass]="{'badge-success': fullProfile.user.status === 'ACTIVE', 'badge-warning': fullProfile.user.status !== 'ACTIVE'}">
+            {{ fullProfile.user.status }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="saveSuccess" class="alert alert--success mb-6">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3"/>
+      </svg>
+      <span>Profile updated successfully.</span>
+    </div>
+
+    <!-- ── View Mode ── -->
+    <ng-container *ngIf="!isEditing">
+      
+      <div class="section surface mb-6">
+        <div class="section__header">
+          <h4 class="section__title">Professional Profile</h4>
+          <button class="btn btn-ghost btn-sm" (click)="toggleEdit()">Edit</button>
+        </div>
+        
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">Bar Council Number</span>
+            <span class="info-value">{{ fullProfile.profile?.bar_council_number || 'N/A' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Bar Council State</span>
+            <span class="info-value">{{ fullProfile.profile?.bar_council_name || 'N/A' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Experience</span>
+            <span class="info-value">{{ fullProfile.profile?.years_of_experience || 0 }} Years</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Practice Type</span>
+            <span class="info-value">{{ fullProfile.profile?.practice_type || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section surface mb-8">
+        <div class="section__header">
+          <h4 class="section__title">Contact Information</h4>
+        </div>
+        
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">Email Address</span>
+            <span class="info-value">{{ fullProfile.user.email }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Phone Number</span>
+            <span class="info-value">{{ fullProfile.user.phone || 'Not provided' }}</span>
+          </div>
+          <div class="info-row info-row--full">
+            <span class="info-label">Office Address</span>
+            <span class="info-value">{{ fullProfile.user.address || 'Not provided' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">City</span>
+            <span class="info-value">{{ fullProfile.user.city || 'Not provided' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">State / Province</span>
+            <span class="info-value">{{ fullProfile.user.state || 'Not provided' }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn btn-secondary btn-block mb-6" (click)="logout()">
+        Sign Out
+      </button>
+    </ng-container>
+
+    <!-- ── Edit Mode ── -->
+    <ng-container *ngIf="isEditing">
+      <div class="section surface mb-8">
+        <h4 class="section__title mb-6">Edit Profile</h4>
+        
+        <form (ngSubmit)="saveProfile()" #profileForm="ngForm">
+          
+          <h5 class="section-label">Personal Details</h5>
+          
+          <div class="form-row">
+            <div class="form-field flex-1">
+              <label>First Name <span class="text-danger">*</span></label>
+              <ion-input type="text" [(ngModel)]="editData.first_name" name="firstName" required></ion-input>
+            </div>
+            <div class="form-field flex-1">
+              <label>Last Name <span class="text-danger">*</span></label>
+              <ion-input type="text" [(ngModel)]="editData.last_name" name="lastName" required></ion-input>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Phone Number</label>
+            <ion-input type="tel" [(ngModel)]="editData.phone" name="phone"></ion-input>
+          </div>
+          
+          <div class="divider"></div>
+          <h5 class="section-label">Professional Details</h5>
+          
+          <div class="form-row">
+            <div class="form-field flex-1">
+              <label>Bar Council Number</label>
+              <ion-input type="text" [(ngModel)]="editData.bar_council_number" name="bcn"></ion-input>
+            </div>
+            <div class="form-field flex-1">
+              <label>Bar Council State</label>
+              <ion-input type="text" [(ngModel)]="editData.bar_council_name" name="bcs"></ion-input>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-field flex-1">
+              <label>Years of Experience</label>
+              <ion-input type="number" [(ngModel)]="editData.years_of_experience" name="yoe"></ion-input>
+            </div>
+            <div class="form-field flex-1">
+              <label>Designation</label>
+              <ion-input type="text" [(ngModel)]="editData.designation" name="designation" placeholder="e.g. Senior Counsel"></ion-input>
+            </div>
+          </div>
+          
+          <div class="form-field">
+            <label>Professional Summary</label>
+            <ion-textarea [(ngModel)]="editData.professional_summary" name="summary" rows="3" class="custom-textarea"></ion-textarea>
+          </div>
+
+          <div class="divider"></div>
+          <h5 class="section-label">Office Address</h5>
+          
+          <div class="form-field">
+            <label>Street Address</label>
+            <ion-input type="text" [(ngModel)]="editData.address" name="address"></ion-input>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field flex-1">
+              <label>City</label>
+              <ion-input type="text" [(ngModel)]="editData.city" name="city"></ion-input>
+            </div>
+            <div class="form-field flex-1">
+              <label>State</label>
+              <ion-input type="text" [(ngModel)]="editData.state" name="state"></ion-input>
+            </div>
+          </div>
+
+          <div class="action-bar sticky-bottom mt-6">
+            <button type="button" class="btn btn-secondary flex-1" (click)="toggleEdit()" [disabled]="isSaving">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary flex-1" [disabled]="!profileForm.valid || isSaving">
+              <span *ngIf="!isSaving">Save Changes</span>
+              <div *ngIf="isSaving" class="spinner spinner-sm"></div>
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

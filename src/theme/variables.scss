@@ -1,6 +1,6 @@
 /* ============================================================
    Legal AI System — Theme Variables
-   Premium legal technology color palette & design tokens
+   Premium SaaS/Fintech-grade Design Tokens
    ============================================================ */
 
 :root {
@@ -14,81 +14,96 @@
   --color-accent: #C9942E;
   --color-accent-light: #D4A948;
 
-  /* ── Neutrals ── */
-  --color-background: #F7F8FA;
-  --color-surface: #FFFFFF;
-  --color-surface-hover: #F1F3F7;
-  --color-text-primary: #172033;
-  --color-text-secondary: #667085;
-  --color-text-inverse: #FFFFFF;
-  --color-text-muted: #98A2B3;
-  --color-border: #E4E7EC;
-  --color-border-light: #F2F4F7;
-  --color-divider: #EAECF0;
+  /* ── Neutral Grayscale ── */
+  --color-gray-50: #F8FAFC;
+  --color-gray-100: #F1F5F9;
+  --color-gray-200: #E2E8F0;
+  --color-gray-300: #CBD5E1;
+  --color-gray-400: #94A3B8;
+  --color-gray-500: #64748B;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1E293B;
+  --color-gray-900: #0F172A;
 
-  /* ── Semantic ── */
-  --color-success: #16A34A;
-  --color-success-bg: #F0FDF4;
-  --color-warning: #D97706;
+  /* ── Background & Surface ── */
+  --color-background: var(--color-gray-50);
+  --color-surface: #FFFFFF;
+  --color-surface-hover: var(--color-gray-50);
+  
+  /* ── Text ── */
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-muted: var(--color-gray-400);
+  --color-text-inverse: #FFFFFF;
+
+  /* ── Borders ── */
+  --color-border: var(--color-gray-200);
+  --color-border-light: var(--color-gray-100);
+  --color-divider: var(--color-gray-100);
+
+  /* ── Semantic Colors ── */
+  --color-success: #10B981;
+  --color-success-bg: #ECFDF5;
+  --color-warning: #F59E0B;
   --color-warning-bg: #FFFBEB;
-  --color-danger: #DC2626;
+  --color-danger: #EF4444;
   --color-danger-bg: #FEF2F2;
-  --color-info: #2563EB;
+  --color-info: #3B82F6;
   --color-info-bg: #EFF6FF;
 
-  /* ── Typography ── */
+  /* ── Typography Scale ── */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-  --font-size-xs: 0.75rem;     /* 12px */
-  --font-size-sm: 0.8125rem;   /* 13px */
-  --font-size-base: 0.875rem;  /* 14px */
-  --font-size-md: 1rem;        /* 16px */
-  --font-size-lg: 1.125rem;    /* 18px */
-  --font-size-xl: 1.25rem;     /* 20px */
-  --font-size-2xl: 1.5rem;     /* 24px */
-  --font-size-3xl: 1.875rem;   /* 30px */
-  --font-size-display: 2.25rem;/* 36px */
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 32px;
+  --font-size-display: 40px;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  --line-height-none: 1;
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  /* ── Spacing Scale ── */
+  /* ── Spacing Scale (4pt system) ── */
   --space-0: 0;
-  --space-1: 0.25rem;   /* 4px */
-  --space-2: 0.5rem;    /* 8px */
-  --space-3: 0.75rem;   /* 12px */
-  --space-4: 1rem;      /* 16px */
-  --space-5: 1.25rem;   /* 20px */
-  --space-6: 1.5rem;    /* 24px */
-  --space-8: 2rem;      /* 32px */
-  --space-10: 2.5rem;   /* 40px */
-  --space-12: 3rem;     /* 48px */
-  --space-16: 4rem;     /* 64px */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
 
   /* ── Border Radius ── */
   --radius-sm: 6px;
   --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-2xl: 20px;
+  --radius-lg: 12px;   /* Standard Card */
+  --radius-xl: 16px;   /* Modal/Sheet */
+  --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* ── Shadows ── */
-  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
-  --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.1), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03);
-  --shadow-xl: 0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03);
+  /* ── Elevation / Box Shadows ── */
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05); /* Buttons, small elements */
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04); /* Resting Cards */
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.05); /* Hover Cards, Dropdowns */
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05); /* Modals */
 
   /* ── Transitions ── */
-  --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
-  --transition-slow: 350ms ease;
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ── Z-Index Scale ── */
   --z-dropdown: 100;

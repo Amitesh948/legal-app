@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, Router } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { IonContent } from '@ionic/angular';
 import { AuthService } from '../../core/services/auth.service';
+import { BottomNavComponent, NavItem } from '../../shared/components/bottom-nav/bottom-nav.component';
+import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 
 @Component({
   selector: 'app-client-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLink, IonContent],
+  imports: [CommonModule, RouterOutlet, IonContent, BottomNavComponent, AvatarComponent],
   template: `
     <div class="app-shell">
       <!-- Top Header -->
@@ -41,55 +43,42 @@ import { AuthService } from '../../core/services/auth.service';
       </main>
 
       <!-- Bottom Navigation -->
-      <nav class="bottom-nav">
-        <a routerLink="/client" class="bottom-nav__item"
-           [class.active]="isActive('/client', true)">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-            <polyline points="9 22 9 12 15 12 15 22"/>
-          </svg>
-          <span>Home</span>
-        </a>
-        <a routerLink="/client/cases" class="bottom-nav__item"
-           [class.active]="isActive('/client/cases')">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-          </svg>
-          <span>Cases</span>
-        </a>
-        <a routerLink="/client/documents" class="bottom-nav__item"
-           [class.active]="isActive('/client/documents')">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
-          <span>Docs</span>
-        </a>
-        <a routerLink="/client/profile" class="bottom-nav__item"
-           [class.active]="isActive('/client/profile')">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-          <span>Profile</span>
-        </a>
-      </nav>
+      <app-bottom-nav [items]="navItems"></app-bottom-nav>
     </div>
   `,
   styleUrl: './client-layout.component.scss'
 })
 export class ClientLayoutComponent {
+  navItems: NavItem[] = [
+    {
+      label: 'Home',
+      route: '/client/home',
+      icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
+      iconFilled: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8h4v8a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z',
+      exactMatch: true
+    },
+    {
+      label: 'Cases',
+      route: '/client/cases',
+      icon: 'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z',
+      iconFilled: 'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z'
+    },
+    {
+      label: 'Messages',
+      route: '/client/messages',
+      icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
+      iconFilled: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'
+    },
+    {
+      label: 'Profile',
+      route: '/client/profile',
+      icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+      iconFilled: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z'
+    }
+  ];
+
   constructor(
     private router: Router,
     private authService: AuthService
   ) {}
-
-  isActive(path: string, exact = false): boolean {
-    if (exact) {
-      return this.router.url === path;
-    }
-    return this.router.url.startsWith(path);
-  }
 }

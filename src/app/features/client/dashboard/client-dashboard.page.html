@@ -1,0 +1,138 @@
+<div class="page-container pull-to-refresh">
+
+  <!-- Loading State -->
+  <app-skeleton-loader *ngIf="loading"></app-skeleton-loader>
+
+  <!-- Error State -->
+  <app-error-state
+    *ngIf="!loading && error"
+    title="Unable to load dashboard"
+    [message]="errorMessage"
+    (retry)="loadDashboard()">
+  </app-error-state>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading && !error" class="dashboard-content">
+
+    <!-- ── Header Section ── -->
+    <section class="dash-header">
+      <div class="dash-header__text">
+        <span class="dash-header__greeting">{{ greeting }},</span>
+        <h2 class="dash-header__name">{{ user?.first_name || 'there' }}</h2>
+        <p class="dash-header__subtitle">{{ currentDate | date:'fullDate' }}</p>
+      </div>
+      <a routerLink="/client/profile" class="dash-header__avatar" aria-label="View profile">
+        <app-avatar
+          [firstName]="user?.first_name || ''"
+          [lastName]="user?.last_name || ''"
+          [size]="48">
+        </app-avatar>
+      </a>
+    </section>
+
+    <!-- ── Stats Grid ── -->
+    <section class="dash-section" *ngIf="dashboard">
+      <div class="stats-grid">
+        <app-stat-card
+          label="Active Cases"
+          [value]="activeCases"
+          icon="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+          bgColor="var(--color-info-bg)"
+          iconColor="var(--color-info)">
+        </app-stat-card>
+
+        <app-stat-card
+          label="Pending Updates"
+          [value]="dashboard.pending_cases"
+          icon="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z M12 6v6l4 2"
+          bgColor="var(--color-warning-bg)"
+          iconColor="var(--color-warning)">
+        </app-stat-card>
+
+        <app-stat-card
+          label="Completed"
+          [value]="dashboard.completed_cases"
+          icon="M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3"
+          bgColor="var(--color-success-bg)"
+          iconColor="var(--color-success)"
+          [trend]="12">
+        </app-stat-card>
+
+        <app-stat-card
+          label="Payments Due"
+          [value]="dashboard.pending_payments"
+          icon="M12 1v22 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+          bgColor="var(--color-danger-bg)"
+          iconColor="var(--color-danger)">
+        </app-stat-card>
+      </div>
+    </section>
+
+    <!-- ── Recent Cases ── -->
+    <section class="dash-section" *ngIf="dashboard">
+      <div class="dash-section__header">
+        <h4 class="section-title">Recent Activity</h4>
+        <a routerLink="/client/cases" class="btn btn-ghost btn-sm">See all</a>
+      </div>
+
+      <!-- Has Cases -->
+      <div *ngIf="dashboard.recent_cases.length > 0" class="list-group">
+        <a *ngFor="let c of dashboard.recent_cases"
+           [routerLink]="['/client/cases', c.id]"
+           class="list-item interactive">
+          
+          <div class="list-item__dot" [ngClass]="getDotClass(c.status)"></div>
+          
+          <div class="list-item__content">
+            <span class="list-item__title">{{ c.title }}</span>
+            <span class="list-item__meta" *ngIf="c.updated_at">{{ c.updated_at | date:'MMM d, y' }}</span>
+          </div>
+          
+          <span class="badge" [ngClass]="getStatusClass(c.status)">{{ c.status }}</span>
+        </a>
+      </div>
+
+      <!-- No Cases -->
+      <app-empty-state
+        *ngIf="dashboard.recent_cases.length === 0"
+        title="No cases yet"
+        message="Start by telling us about your legal issue."
+        actionLabel="Create a Case"
+        icon="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+        (actionClick)="null">
+      </app-empty-state>
+    </section>
+
+    <!-- ── Quick Actions ── -->
+    <section class="dash-section">
+      <h4 class="section-title mb-4">Quick Actions</h4>
+      <div class="list-group">
+        <a routerLink="/client/cases" class="list-item interactive">
+          <div class="list-item__icon bg-surface text-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="list-item__content">
+            <span class="list-item__title">My Cases</span>
+            <span class="list-item__meta">View all matters</span>
+          </div>
+          <svg class="text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+        <a routerLink="/client/messages" class="list-item interactive">
+          <div class="list-item__icon bg-surface text-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          </div>
+          <div class="list-item__content">
+            <span class="list-item__title">Messages</span>
+            <span class="list-item__meta">Secure communications</span>
+          </div>
+          <svg class="text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+    </section>
+
+  </div>
+</div>
