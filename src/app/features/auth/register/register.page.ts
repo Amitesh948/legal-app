@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { IonInput } from '@ionic/angular';
 import { AuthService } from '../../../core/services/auth.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 type RegistrationStep = 'role' | 'otp-request' | 'otp-verify' | 'details';
 
@@ -37,7 +38,8 @@ export class RegisterPage {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   selectRole(role: 'client' | 'advocate'): void {
@@ -59,10 +61,12 @@ export class RegisterPage {
         this.loading = false;
         this.successMessage = 'OTP sent to your email address.';
         this.currentStep = 'otp-verify';
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.message || 'Failed to send OTP.';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -80,10 +84,12 @@ export class RegisterPage {
         this.loading = false;
         this.successMessage = '';
         this.currentStep = 'details';
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.message || 'Invalid OTP code.';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -120,6 +126,7 @@ export class RegisterPage {
       }).subscribe({
         next: () => {
           this.loading = false;
+          this.cdr.detectChanges();
           this.router.navigate(['/auth/login'], {
             queryParams: { registered: 'true' }
           });
@@ -127,6 +134,7 @@ export class RegisterPage {
         error: (err) => {
           this.loading = false;
           this.errorMessage = err.message || 'Registration failed.';
+          this.cdr.detectChanges();
         }
       });
     } else {

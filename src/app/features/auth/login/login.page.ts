@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { IonInput } from '@ionic/angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest } from '../../../core/models/user.model';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class LoginPage {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   togglePassword(): void {
@@ -47,6 +49,7 @@ export class LoginPage {
     this.authService.login(credentials).subscribe({
       next: (user) => {
         this.loading = false;
+        this.cdr.detectChanges();
         if (user.role === 'advocate') {
           this.router.navigate(['/advocate']);
         } else {
@@ -56,6 +59,7 @@ export class LoginPage {
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.message || 'Login failed. Please try again.';
+        this.cdr.detectChanges();
       }
     });
   }
