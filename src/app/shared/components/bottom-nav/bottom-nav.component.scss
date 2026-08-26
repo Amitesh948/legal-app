@@ -54,7 +54,7 @@
 }
 
 .bottom-nav__item.active {
-  color: var(--color-primary);
+  color: var(--brand-500);
 }
 
 .bottom-nav__icon-wrapper {
@@ -69,8 +69,8 @@
 }
 
 .bottom-nav__item.active .bottom-nav__icon-wrapper {
-  background-color: var(--color-info-bg);
-  color: var(--color-info);
+  background-color: var(--brand-50);
+  color: var(--brand-500);
 }
 
 .bottom-nav__item svg {

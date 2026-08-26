@@ -39,7 +39,7 @@ import { CommonModule } from '@angular/common';
       width: 96px;
       height: 96px;
       border-radius: var(--radius-full);
-      background: var(--color-gray-50);
+      background: var(--brand-50);
       margin-bottom: var(--space-4);
     }
     .empty-state__title {

@@ -4,53 +4,41 @@
    ============================================================ */
 
 :root {
-  /* ── Primary Palette ── */
-  --color-primary: #0F2747;
-  --color-primary-light: #1A3A5C;
-  --color-primary-dark: #0A1B33;
-  --color-secondary: #2563EB;
-  --color-secondary-light: #3B82F6;
-  --color-secondary-dark: #1D4ED8;
-  --color-accent: #C9942E;
-  --color-accent-light: #D4A948;
+  /* ── Brand Scale (Hue: 214) ── */
+  --brand-50: #F3F7FB;
+  --brand-100: #E1EAF4;
+  --brand-200: #C2D5E8;
+  --brand-300: #9BB8D4;
+  --brand-400: #6F96BC;
+  --brand-500: #1A6BE6; /* Primary Action */
+  --brand-600: #1656B8;
+  --brand-700: #11418A;
+  --brand-800: #0D2D5C;
+  --brand-900: #0F2747; /* Original Anchor */
 
-  /* ── Neutral Grayscale ── */
-  --color-gray-50: #F8FAFC;
-  --color-gray-100: #F1F5F9;
-  --color-gray-200: #E2E8F0;
-  --color-gray-300: #CBD5E1;
-  --color-gray-400: #94A3B8;
-  --color-gray-500: #64748B;
-  --color-gray-600: #475569;
-  --color-gray-700: #334155;
-  --color-gray-800: #1E293B;
-  --color-gray-900: #0F172A;
-
-  /* ── Background & Surface ── */
-  --color-background: var(--color-gray-50);
-  --color-surface: #FFFFFF;
-  --color-surface-hover: var(--color-gray-50);
-  
-  /* ── Text ── */
-  --color-text-primary: var(--color-gray-900);
-  --color-text-secondary: var(--color-gray-600);
-  --color-text-muted: var(--color-gray-400);
-  --color-text-inverse: #FFFFFF;
-
-  /* ── Borders ── */
-  --color-border: var(--color-gray-200);
-  --color-border-light: var(--color-gray-100);
-  --color-divider: var(--color-gray-100);
+  /* ── Neutral Grayscale (Tinted slightly cool) ── */
+  --color-bg: #F8F9FB;
+  --color-surface: #FCFDFD;
+  --color-border: #E4E7EC;
+  --color-text-primary: #101828;
+  --color-text-secondary: #667085;
+  --color-text-disabled: #98A2B3;
 
   /* ── Semantic Colors ── */
-  --color-success: #10B981;
-  --color-success-bg: #ECFDF5;
-  --color-warning: #F59E0B;
-  --color-warning-bg: #FFFBEB;
-  --color-danger: #EF4444;
-  --color-danger-bg: #FEF2F2;
-  --color-info: #3B82F6;
-  --color-info-bg: #EFF6FF;
+  --status-success-bg: #ECFDF5;
+  --status-success-text: #065F46;
+  
+  --status-warning-bg: #FFFBEB;
+  --status-warning-text: #92400E;
+  
+  --status-danger-bg: #FEF2F2;
+  --status-danger-text: #991B1B;
+  
+  --status-info-bg: #EFF6FF;
+  --status-info-text: #1E40AF;
+
+  /* ── Interactive ── */
+  --color-focus-ring: rgba(26, 107, 230, 0.25);
 
   /* ── Typography Scale ── */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -115,5 +103,5 @@
 
 /* ── Override Ionic defaults ── */
 ion-content {
-  --background: var(--color-background);
+  --background: var(--color-bg);
 }

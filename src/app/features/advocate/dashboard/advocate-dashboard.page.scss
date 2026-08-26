@@ -122,11 +122,13 @@
   flex-shrink: 0;
 }
 
-.dot-success { background: var(--color-success); }
-.dot-warning { background: var(--color-warning); }
-.dot-danger { background: var(--color-danger); }
-.dot-info { background: var(--color-info); }
-.dot-gray { background: var(--color-gray-400); }
+.dot-success { background: var(--status-success-text); }
+.dot-warning { background: var(--status-warning-text); }
+.dot-danger { background: var(--status-danger-text); }
+.dot-info { background: var(--status-info-text); }
+.dot-gray { background: var(--color-border); }
+
+.text-brand { color: var(--brand-500); }
 
 .list-item__icon {
   display: flex;

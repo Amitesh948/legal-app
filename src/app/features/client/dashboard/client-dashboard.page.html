@@ -37,24 +37,24 @@
           label="Active Cases"
           [value]="activeCases"
           icon="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-          bgColor="var(--color-info-bg)"
-          iconColor="var(--color-info)">
+          bgColor="var(--status-info-bg)"
+          iconColor="var(--status-info-text)">
         </app-stat-card>
 
         <app-stat-card
           label="Pending Updates"
           [value]="dashboard.pending_cases"
           icon="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z M12 6v6l4 2"
-          bgColor="var(--color-warning-bg)"
-          iconColor="var(--color-warning)">
+          bgColor="var(--status-warning-bg)"
+          iconColor="var(--status-warning-text)">
         </app-stat-card>
 
         <app-stat-card
           label="Completed"
           [value]="dashboard.completed_cases"
           icon="M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3"
-          bgColor="var(--color-success-bg)"
-          iconColor="var(--color-success)"
+          bgColor="var(--status-success-bg)"
+          iconColor="var(--status-success-text)"
           [trend]="12">
         </app-stat-card>
 
@@ -62,8 +62,8 @@
           label="Payments Due"
           [value]="dashboard.pending_payments"
           icon="M12 1v22 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
-          bgColor="var(--color-danger-bg)"
-          iconColor="var(--color-danger)">
+          bgColor="var(--brand-50)"
+          iconColor="var(--brand-700)">
         </app-stat-card>
       </div>
     </section>
@@ -108,7 +108,7 @@
       <h4 class="section-title mb-4">Quick Actions</h4>
       <div class="list-group">
         <a routerLink="/client/cases" class="list-item interactive">
-          <div class="list-item__icon bg-surface text-primary">
+          <div class="list-item__icon bg-surface text-brand">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
             </svg>
@@ -120,7 +120,7 @@
           <svg class="text-muted" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
         <a routerLink="/client/messages" class="list-item interactive">
-          <div class="list-item__icon bg-surface text-primary">
+          <div class="list-item__icon bg-surface text-brand">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>

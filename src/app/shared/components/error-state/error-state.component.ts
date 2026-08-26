@@ -31,7 +31,7 @@ import { CommonModule } from '@angular/common';
       padding: var(--space-12) var(--space-6);
       text-align: center;
       background: var(--color-surface);
-      border: 1px solid var(--color-danger-bg);
+      border: 1px solid var(--status-danger-bg);
       border-radius: var(--radius-lg);
     }
     .error-state__graphic {
@@ -41,8 +41,8 @@ import { CommonModule } from '@angular/common';
       width: 80px;
       height: 80px;
       border-radius: var(--radius-full);
-      background: var(--color-danger-bg);
-      color: var(--color-danger);
+      background: var(--status-danger-bg);
+      color: var(--status-danger-text);
       margin-bottom: var(--space-4);
     }
     .error-state__title {
