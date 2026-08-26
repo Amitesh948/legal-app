@@ -342,8 +342,8 @@ a:hover {
   box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
-.form-field input,
-.form-field textarea,
+.form-field input:not(.native-input),
+.form-field textarea:not(.native-textarea),
 .form-field select {
   width: 100%;
   min-height: 48px;
@@ -359,15 +359,15 @@ a:hover {
   box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.02) inset;
 }
 
-.form-field input:focus,
-.form-field textarea:focus,
+.form-field input:not(.native-input):focus,
+.form-field textarea:not(.native-textarea):focus,
 .form-field select:focus {
   border-color: var(--brand-500);
   box-shadow: 0 0 0 3px var(--color-focus-ring);
 }
 
-.form-field input::placeholder,
-.form-field textarea::placeholder {
+.form-field input:not(.native-input)::placeholder,
+.form-field textarea:not(.native-textarea)::placeholder {
   color: var(--color-text-disabled);
 }
 
@@ -536,16 +536,21 @@ a:hover {
     .field-hint {
       color: var(--color-text-muted);
     }
-    ion-input, input, textarea, select {
+    ion-input {
       --background: var(--color-surface);
-      background: var(--color-surface);
       --color: var(--color-text-primary);
-      color: var(--color-text-primary);
       --placeholder-color: var(--color-text-muted);
       --highlight-color-focused: var(--color-secondary);
       border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
     }
-    ion-input:focus-within, input:focus, textarea:focus, select:focus {
+    input:not(.native-input), textarea:not(.native-textarea), select {
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+    }
+    ion-input:focus-within, input:not(.native-input):focus, textarea:not(.native-textarea):focus, select:focus {
       border-color: var(--color-secondary);
       box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
     }
