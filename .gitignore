@@ -1,0 +1,88 @@
+# Dependencies
+/node_modules
+
+# Ionic
+/.ionic
+/www
+/platforms
+/plugins
+
+# Angular / Build
+/.angular
+/.angular/cache
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Environment files / secrets
+.env
+.env.*
+!.env.example
+
+# Capacitor Android - generated/local files
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+
+# Capacitor iOS - generated/local files
+ios/App/Pods/
+ios/App/build/
+ios/App/DerivedData/
+
+# Signing certificates / keys
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.pem
+*.key
+
+# Firebase / Google service credentials
+google-services.json
+GoogleService-Info.plist
+
+# Test coverage
+/coverage
+.nyc_output/
+
+# Temporary / backup files
+*.bak
+*.orig
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log
+yarn-error.log
+
+# IDEs
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Miscellaneous
+*~
+.history/
+.sass-cache/
+.nx/
+.nx/cache/
+.typings/
