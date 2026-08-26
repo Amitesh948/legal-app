@@ -5,55 +5,8 @@ import { CommonModule } from '@angular/common';
   selector: 'app-empty-state',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="empty-state">
-      <div class="empty-state__graphic">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
-             stroke="var(--color-gray-400)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-          <path [attr.d]="icon"/>
-        </svg>
-      </div>
-      <h3 class="empty-state__title">{{ title }}</h3>
-      <p class="empty-state__message">{{ message }}</p>
-      <button *ngIf="actionLabel" class="btn btn-secondary mt-5" (click)="actionClick.emit()">
-        {{ actionLabel }}
-      </button>
-    </div>
-  `,
-  styles: [`
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-12) var(--space-6);
-      text-align: center;
-      background: var(--color-surface);
-      border: 1px dashed var(--color-gray-300);
-      border-radius: var(--radius-lg);
-    }
-    .empty-state__graphic {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 96px;
-      height: 96px;
-      border-radius: var(--radius-full);
-      background: var(--brand-50);
-      margin-bottom: var(--space-4);
-    }
-    .empty-state__title {
-      font-size: var(--font-size-lg);
-      color: var(--color-text-primary);
-      margin-bottom: var(--space-2);
-    }
-    .empty-state__message {
-      font-size: var(--font-size-base);
-      color: var(--color-text-secondary);
-      max-width: 280px;
-      margin: 0;
-    }
-  `]
+  templateUrl: './empty-state.component.html',
+  styleUrl: './empty-state.component.scss'
 })
 export class EmptyStateComponent {
   @Input() title = 'No data available';

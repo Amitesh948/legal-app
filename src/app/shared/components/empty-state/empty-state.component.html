@@ -1,0 +1,13 @@
+<div class="empty-state">
+      <div class="empty-state__graphic">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none"
+             stroke="var(--color-gray-400)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path [attr.d]="icon"/>
+        </svg>
+      </div>
+      <h3 class="empty-state__title">{{ title }}</h3>
+      <p class="empty-state__message">{{ message }}</p>
+      <button *ngIf="actionLabel" class="btn btn-secondary mt-5" (click)="actionClick.emit()">
+        {{ actionLabel }}
+      </button>
+    </div>

@@ -14,29 +14,7 @@ export interface NavItem {
   selector: 'app-bottom-nav',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  template: `
-    <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
-      <div class="bottom-nav__inner">
-        <a *ngFor="let item of items"
-           [routerLink]="item.route"
-           class="bottom-nav__item"
-           [class.active]="isActive(item)"
-           [attr.aria-label]="item.label"
-           [attr.aria-current]="isActive(item) ? 'page' : null">
-          
-          <div class="bottom-nav__icon-wrapper">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                 [attr.stroke]="isActive(item) && !item.iconFilled ? 'currentColor' : 'currentColor'"
-                 [attr.fill]="isActive(item) && item.iconFilled ? 'currentColor' : 'none'"
-                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path [attr.d]="isActive(item) && item.iconFilled ? item.iconFilled : item.icon"/>
-            </svg>
-          </div>
-          <span>{{ item.label }}</span>
-        </a>
-      </div>
-    </nav>
-  `,
+  templateUrl: './bottom-nav.component.html',
   styleUrl: './bottom-nav.component.scss'
 })
 export class BottomNavComponent {

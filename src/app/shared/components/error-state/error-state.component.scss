@@ -1,0 +1,33 @@
+.error-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-12) var(--space-6);
+      text-align: center;
+      background: var(--color-surface);
+      border: 1px solid var(--status-danger-bg);
+      border-radius: var(--radius-lg);
+    }
+    .error-state__graphic {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: var(--radius-full);
+      background: var(--status-danger-bg);
+      color: var(--status-danger-text);
+      margin-bottom: var(--space-4);
+    }
+    .error-state__title {
+      font-size: var(--font-size-lg);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .error-state__message {
+      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      max-width: 280px;
+      margin: 0;
+    }
