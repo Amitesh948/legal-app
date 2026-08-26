@@ -457,3 +457,101 @@ a:hover {
     max-width: 800px;
   }
 }
+
+/* ============================================================
+   LEGACY AUTH THEME SCOPE
+   Restores pre-redesign colors strictly for Auth components
+   ============================================================ */
+.auth-layout {
+  --color-primary: #0F2747;
+  --color-primary-light: #1A3A5C;
+  --color-primary-dark: #0A1B33;
+  --color-secondary: #2563EB;
+  --color-secondary-light: #3B82F6;
+  --color-secondary-dark: #1D4ED8;
+  --color-accent: #C9942E;
+  
+  --color-gray-50: #F8FAFC;
+  --color-gray-100: #F1F5F9;
+  --color-gray-200: #E2E8F0;
+  --color-gray-300: #CBD5E1;
+  --color-gray-400: #94A3B8;
+  --color-gray-500: #64748B;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1E293B;
+  --color-gray-900: #0F172A;
+
+  --color-background: var(--color-gray-50);
+  --color-surface: #FFFFFF;
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-600);
+  --color-text-muted: var(--color-gray-400);
+  --color-text-inverse: #FFFFFF;
+  --color-border: var(--color-gray-200);
+
+  /* Override structural colors mapped in global.scss */
+  color: var(--color-text-primary);
+  
+  .btn-primary {
+    background: var(--color-primary);
+    color: var(--color-text-inverse);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-primary-light);
+  }
+  .btn-primary:active:not(:disabled) {
+    background: var(--color-primary-dark);
+  }
+
+  .btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--color-gray-50);
+    border-color: var(--color-gray-300);
+  }
+
+  .btn-ghost {
+    color: var(--color-text-secondary);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--color-gray-50);
+    color: var(--color-text-primary);
+  }
+
+  a {
+    color: var(--color-secondary);
+  }
+  a:hover {
+    color: var(--color-secondary-dark);
+  }
+
+  .form-field {
+    label {
+      color: var(--color-gray-700);
+    }
+    .field-hint {
+      color: var(--color-text-muted);
+    }
+    ion-input, input, textarea, select {
+      --background: var(--color-surface);
+      background: var(--color-surface);
+      --color: var(--color-text-primary);
+      color: var(--color-text-primary);
+      --placeholder-color: var(--color-text-muted);
+      --highlight-color-focused: var(--color-secondary);
+      border: 1px solid var(--color-border);
+    }
+    ion-input:focus-within, input:focus, textarea:focus, select:focus {
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+    }
+  }
+
+  .text-primary { color: var(--color-text-primary); }
+  .text-secondary { color: var(--color-text-secondary); }
+  .text-muted { color: var(--color-text-muted); }
+}
