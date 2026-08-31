@@ -9,6 +9,7 @@ import { ErrorStateComponent } from '../../../../shared/components/error-state/e
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { TimelineComponent } from '../../../../shared/components/timeline/timeline.component';
 import { DocumentListItemComponent } from '../../../../shared/components/document-list-item/document-list-item.component';
+import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
 
 @Component({
   selector: 'app-client-case-detail',
@@ -22,7 +23,8 @@ import { DocumentListItemComponent } from '../../../../shared/components/documen
     ErrorStateComponent,
     EmptyStateComponent,
     TimelineComponent,
-    DocumentListItemComponent
+    DocumentListItemComponent,
+    ChatRoomComponent
   ],
   templateUrl: './case-detail.page.html',
   styleUrl: './case-detail.page.scss'

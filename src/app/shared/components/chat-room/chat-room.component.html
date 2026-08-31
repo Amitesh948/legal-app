@@ -1,0 +1,102 @@
+<div class="chat-wrapper">
+  
+  <!-- Loading State -->
+  <div class="chat-loading p-4" *ngIf="loading">
+    <app-skeleton-loader></app-skeleton-loader>
+    <app-skeleton-loader class="mt-4"></app-skeleton-loader>
+  </div>
+
+  <!-- Error State -->
+  <div class="chat-error p-4" *ngIf="!loading && error">
+    <app-error-state (retry)="ngOnInit()"></app-error-state>
+  </div>
+
+  <!-- Chat Content -->
+  <div class="chat-main" *ngIf="!loading && !error">
+    
+    <ion-content [scrollEvents]="true" (ionScroll)="onScroll($event)" class="chat-scroll-content">
+      
+      <!-- Empty State -->
+      <div class="empty-chat-container p-4" *ngIf="messages.length === 0">
+        <app-empty-state 
+          title="No Messages Yet"
+          message="Type a message below to start the conversation."
+          icon="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+        </app-empty-state>
+      </div>
+
+      <!-- Message List -->
+      <div class="messages-list p-4" *ngIf="messages.length > 0">
+        <div 
+          *ngFor="let msg of messages" 
+          class="message-row"
+          [class.outgoing]="isOutgoing(msg)"
+          [class.incoming]="!isOutgoing(msg)">
+          
+          <!-- Recipient Avatar -->
+          <div class="avatar-col" *ngIf="!isOutgoing(msg)">
+            <app-avatar 
+              [firstName]="getFirstName(msg.sender_name)" 
+              [lastName]="getLastName(msg.sender_name)" 
+              [size]="32">
+            </app-avatar>
+          </div>
+
+          <!-- Message Bubble Container -->
+          <div class="bubble-col">
+            <div class="sender-label fs-xs text-secondary mb-1" *ngIf="!isOutgoing(msg) && msg.sender_name">
+              {{ msg.sender_name }}
+            </div>
+
+            <div class="bubble" [class.bubble-failed]="msg.deliveryStatus === 'FAILED'">
+              <p class="message-text m-0 fs-smlh-md">{{ msg.message }}</p>
+            </div>
+
+            <!-- Footer: Timestamp & Delivery Status -->
+            <div class="message-footer d-flex align-center gap-1 mt-1">
+              <span class="timestamp fs-xs text-muted">
+                {{ msg.created_at | date:'shortTime' }}
+              </span>
+
+              <!-- Outgoing Status Indicator -->
+              <ng-container *ngIf="isOutgoing(msg)">
+                <span class="status-indicator fs-xs text-muted" *ngIf="msg.deliveryStatus === 'SENDING'">
+                  • Sending...
+                </span>
+                <span class="status-indicator fs-xs text-danger" *ngIf="msg.deliveryStatus === 'FAILED'" (click)="retrySend(msg)" role="button">
+                  • Failed. Tap to retry.
+                </span>
+              </ng-container>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </ion-content>
+
+    <!-- Input Bar -->
+    <div class="input-bar">
+      <textarea 
+        class="chat-input" 
+        placeholder="Type a message..." 
+        rows="1"
+        [(ngModel)]="newMessageText"
+        (keydown)="onKeyDown($event)"
+        aria-label="Message input">
+      </textarea>
+      
+      <button 
+        class="send-btn" 
+        [disabled]="!newMessageText.trim()" 
+        (click)="sendMessage()"
+        aria-label="Send message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+</div>

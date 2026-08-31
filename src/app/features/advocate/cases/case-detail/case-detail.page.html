@@ -132,11 +132,7 @@
 
     <!-- MESSAGES TAB -->
     <div *ngIf="activeTab === 'Messages'" class="tab-content">
-      <app-empty-state 
-        title="No Messages"
-        message="Start a conversation with your client here."
-        icon="chatbubble">
-      </app-empty-state>
+      <app-chat-room *ngIf="caseId" [caseId]="caseId" [isInternal]="false"></app-chat-room>
     </div>
 
     <!-- OPINIONS TAB -->

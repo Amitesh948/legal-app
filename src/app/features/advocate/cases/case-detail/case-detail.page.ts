@@ -10,6 +10,7 @@ import { EmptyStateComponent } from '../../../../shared/components/empty-state/e
 import { TimelineComponent } from '../../../../shared/components/timeline/timeline.component';
 import { DocumentListItemComponent } from '../../../../shared/components/document-list-item/document-list-item.component';
 import { AiSummaryModalComponent } from '../../../../shared/components/ai-summary-modal/ai-summary-modal.component';
+import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
 
 @Component({
   selector: 'app-advocate-case-detail',
@@ -23,7 +24,8 @@ import { AiSummaryModalComponent } from '../../../../shared/components/ai-summar
     ErrorStateComponent,
     EmptyStateComponent,
     TimelineComponent,
-    DocumentListItemComponent
+    DocumentListItemComponent,
+    ChatRoomComponent
   ],
   templateUrl: './case-detail.page.html',
   styleUrl: './case-detail.page.scss'
