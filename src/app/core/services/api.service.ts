@@ -56,6 +56,13 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
+  upload(endpoint: string, formData: FormData) {
+    return this.http.post(`${this.baseUrl}${endpoint}`, formData, {
+      reportProgress: true,
+      observe: 'events'
+    }).pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     let message = 'An unexpected error occurred';
     if (error.error instanceof ErrorEvent) {

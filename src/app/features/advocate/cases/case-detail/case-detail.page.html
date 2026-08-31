@@ -82,11 +82,52 @@
 
     <!-- DOCUMENTS TAB -->
     <div *ngIf="activeTab === 'Documents'" class="tab-content">
-      <app-empty-state 
-        title="No Documents"
-        message="Documents related to this case will appear here."
-        icon="document">
-      </app-empty-state>
+      
+      <!-- Hidden File Input -->
+      <input type="file" #fileInput class="sr-only-input" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+
+      <!-- Loading State -->
+      <div *ngIf="documentsLoading">
+        <app-skeleton-loader></app-skeleton-loader>
+      </div>
+      
+      <!-- Error State -->
+      <div *ngIf="!documentsLoading && documentsError">
+        <app-error-state (retry)="loadDocuments()"></app-error-state>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="!documentsLoading && !documentsError && documents.length === 0">
+        <app-empty-state 
+          title="No Documents"
+          message="Documents related to this case will appear here."
+          icon="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6"
+          actionLabel="Upload Document"
+          (actionClick)="triggerUpload()">
+        </app-empty-state>
+      </div>
+      
+      <!-- Data State -->
+      <div *ngIf="!documentsLoading && !documentsError && documents.length > 0">
+        <div class="d-flex align-center j-between mb-4">
+          <h4 class="m-0 fs-base">Case Documents</h4>
+          <button class="btn btn-sm btn-primary d-flex align-center gap-1" (click)="triggerUpload()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Upload</span>
+          </button>
+        </div>
+        
+        <app-document-list-item 
+          *ngFor="let doc of documents" 
+          [document]="doc"
+          (actionClick)="onDocumentTap($event)"
+          (showSummary)="openAiSummaryModal($event)">
+        </app-document-list-item>
+      </div>
+
     </div>
 
     <!-- MESSAGES TAB -->

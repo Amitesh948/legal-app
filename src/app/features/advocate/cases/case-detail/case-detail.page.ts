@@ -1,12 +1,15 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { HttpEventType } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, IonRefresher, IonRefresherContent } from '@ionic/angular';
+import { IonContent, IonRefresher, IonRefresherContent, ModalController } from '@ionic/angular';
 import { ApiService } from '../../../../core/services/api.service';
 import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { TimelineComponent } from '../../../../shared/components/timeline/timeline.component';
+import { DocumentListItemComponent } from '../../../../shared/components/document-list-item/document-list-item.component';
+import { AiSummaryModalComponent } from '../../../../shared/components/ai-summary-modal/ai-summary-modal.component';
 
 @Component({
   selector: 'app-advocate-case-detail',
@@ -19,12 +22,15 @@ import { TimelineComponent } from '../../../../shared/components/timeline/timeli
     SkeletonLoaderComponent,
     ErrorStateComponent,
     EmptyStateComponent,
-    TimelineComponent
+    TimelineComponent,
+    DocumentListItemComponent
   ],
   templateUrl: './case-detail.page.html',
   styleUrl: './case-detail.page.scss'
 })
 export class AdvocateCaseDetailPage implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
   caseId: string | null = null;
   caseData: any = null;
   timelineEvents: any[] = [];
@@ -34,12 +40,18 @@ export class AdvocateCaseDetailPage implements OnInit {
   
   tabs = ['Overview', 'Documents', 'Messages', 'Opinions'];
   activeTab = 'Overview';
+  
+  documents: any[] = [];
+  documentsLoading = false;
+  documentsError = false;
+  documentsFetched = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private api: ApiService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit() {
@@ -88,11 +100,146 @@ export class AdvocateCaseDetailPage implements OnInit {
   }
 
   doRefresh(event: any) {
-    this.loadCaseDetails(event);
+    if (this.activeTab === 'Documents') {
+      this.loadDocuments(event);
+    } else {
+      this.loadCaseDetails(event);
+    }
   }
 
   setTab(tab: string) {
     this.activeTab = tab;
+    if (tab === 'Documents' && !this.documentsFetched) {
+      this.loadDocuments();
+    }
+  }
+
+  loadDocuments(event?: any) {
+    this.documentsLoading = true;
+    this.documentsError = false;
+    
+    this.api.get<any>(`/documents/case/${this.caseId}`).subscribe({
+      next: (res) => {
+        this.documents = Array.isArray(res) ? res : (res.data || res.items || []);
+        this.documentsLoading = false;
+        this.documentsFetched = true;
+        if (event) event.target.complete();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.documentsError = true;
+        this.documentsLoading = false;
+        if (event) event.target.complete();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  triggerUpload() {
+    if (this.fileInput) {
+      this.fileInput.nativeElement.click();
+    }
+  }
+
+  async openAiSummaryModal(event: { documentId: string, title: string }) {
+    const modal = await this.modalCtrl.create({
+      component: AiSummaryModalComponent,
+      componentProps: {
+        documentId: event.documentId,
+        documentName: event.title
+      },
+      breakpoints: [0, 0.5, 0.85, 1],
+      initialBreakpoint: 0.85,
+      handle: false
+    });
+    await modal.present();
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Client-side validation
+    const maxMb = 10;
+    if (file.size > maxMb * 1024 * 1024) {
+      alert(`File is too large. Max size is ${maxMb}MB.`);
+      this.resetFileInput();
+      return;
+    }
+    const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowed.includes(file.type)) {
+      alert('Unsupported file type. Please upload a PDF, Image, or Word document.');
+      this.resetFileInput();
+      return;
+    }
+
+    this.startUpload(file);
+    this.resetFileInput();
+  }
+
+  private resetFileInput() {
+    if (this.fileInput) {
+      this.fileInput.nativeElement.value = '';
+    }
+  }
+
+  private startUpload(file: File) {
+    const optimisticId = 'temp-' + Date.now();
+    const optimisticDoc = {
+      id: optimisticId,
+      original_filename: file.name,
+      file_size: file.size,
+      extension: file.name.split('.').pop() || '',
+      created_at: new Date().toISOString(),
+      isUploading: true,
+      progress: 0,
+      error: false,
+      rawFile: file // Keep for retry
+    };
+    
+    this.documents.unshift(optimisticDoc);
+    this.performUpload(optimisticDoc);
+  }
+
+  private performUpload(doc: any) {
+    doc.isUploading = true;
+    doc.error = false;
+    doc.progress = 0;
+    
+    const formData = new FormData();
+    formData.append('file', doc.rawFile);
+    formData.append('case_id', this.caseId!);
+    formData.append('category', 'OTHER');
+
+    this.api.upload('/documents/upload', formData).subscribe({
+      next: (event: any) => {
+        if (event.type === HttpEventType.UploadProgress) {
+          doc.progress = Math.round(100 * event.loaded / (event.total || event.loaded));
+          this.cdr.detectChanges();
+        } else if (event.type === HttpEventType.Response) {
+          // Success
+          Object.assign(doc, event.body);
+          doc.isUploading = false;
+          doc.error = false;
+          this.cdr.detectChanges();
+        }
+      },
+      error: () => {
+        doc.isUploading = false;
+        doc.error = true;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onDocumentTap(doc: any) {
+    if (doc.error) {
+      this.performUpload(doc);
+    } else if (!doc.isUploading) {
+      // Download or preview
+      console.log('Document tapped for preview/download:', doc);
+      // In a real app we would open the file or use Browser plugin
+    }
   }
 
   get statusClass(): string {

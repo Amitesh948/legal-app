@@ -1,0 +1,101 @@
+<div class="document-item" (click)="onTap()" tabindex="0" role="button">
+  <div class="document-icon" [ngClass]="'icon-' + fileIcon">
+    <!-- PDF Icon -->
+    <svg *ngIf="fileIcon === 'pdf'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M10.4 12.6a2 2 0 1 1 3 3L8 21l.5-5.5Z"></path>
+    </svg>
+    
+    <!-- Image Icon -->
+    <svg *ngIf="fileIcon === 'image'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+      <polyline points="21 15 16 10 5 21"></polyline>
+    </svg>
+    
+    <!-- Word Icon -->
+    <svg *ngIf="fileIcon === 'word'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <path d="M9 15h6"></path>
+      <path d="M9 11h6"></path>
+    </svg>
+    
+    <!-- Generic File Icon -->
+    <svg *ngIf="fileIcon === 'file'" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+    </svg>
+  </div>
+  
+  <div class="document-details">
+    <div class="document-name" [class.text-danger]="document.error">{{ document.original_filename }}</div>
+    <div class="document-meta" *ngIf="!document.error && !document.isUploading">
+      <span>{{ formattedSize }}</span>
+      <span class="meta-dot"></span>
+      <span>{{ document.created_at | date:'MMM d, y' }}</span>
+    </div>
+    
+    <!-- Uploading State -->
+    <div class="upload-progress mt-1" *ngIf="document.isUploading">
+      <div class="d-flex j-between fs-xs text-secondary mb-1">
+        <span>Uploading...</span>
+        <span>{{ document.progress || 0 }}%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="document.progress || 0"></div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="text-danger fs-xs mt-1 fw-medium" *ngIf="document.error">
+      Upload failed. Tap to retry.
+    </div>
+  </div>
+  
+  <div class="document-action" style="gap: var(--space-2);">
+    
+    <!-- AI Actions (Advocate Only) -->
+    <ng-container *ngIf="isAdvocate && !document.isUploading && !document.error">
+      
+      <!-- Show "Run AI Summary" if not processed -->
+      <button class="btn btn-sm btn-ghost text-brand" 
+              *ngIf="aiStatus !== 'COMPLETED' && !aiPolling"
+              (click)="runAiSummary($event)">
+        <span *ngIf="aiStatus !== 'FAILED'">Run AI</span>
+        <span *ngIf="aiStatus === 'FAILED'" class="text-danger">Retry AI</span>
+      </button>
+
+      <!-- Polling State -->
+      <div class="d-flex align-center gap-1 text-secondary fs-xs" *ngIf="aiPolling">
+        <div class="spinner spinner-sm"></div>
+        <span>AI Processing...</span>
+      </div>
+
+      <!-- Show "View Summary" if completed -->
+      <button class="btn btn-sm btn-ghost text-brand" 
+              *ngIf="aiStatus === 'COMPLETED'"
+              (click)="viewSummary($event)">
+        View Summary
+      </button>
+
+    </ng-container>
+
+    <!-- Upload Spinner while uploading -->
+    <div class="spinner spinner-sm" *ngIf="document.isUploading"></div>
+    
+    <!-- Retry Icon (Upload failed) -->
+    <svg *ngIf="document.error" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-danger">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+    </svg>
+
+    <!-- Normal Action (Download/Preview - represented by chevron or download icon) -->
+    <svg *ngIf="!document.isUploading && !document.error" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted" style="margin-left: var(--space-2);">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+  </div>
+</div>
