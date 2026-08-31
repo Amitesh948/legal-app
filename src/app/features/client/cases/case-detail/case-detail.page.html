@@ -60,19 +60,19 @@
       <div class="card mb-6 p-0 overflow-hidden">
         <div class="kv-row">
           <span class="kv-label">Client Name</span>
-          <span class="kv-value fw-medium">{{ caseData.client?.name || 'You' }}</span>
+          <span class="kv-value fw-medium">{{ caseData.client ? (caseData.client.first_name + ' ' + caseData.client.last_name) : 'You' }}</span>
         </div>
         <div class="kv-row">
           <span class="kv-label">Advocate Assigned</span>
-          <span class="kv-value fw-medium">{{ caseData.advocate?.name || 'Not yet assigned' }}</span>
+          <span class="kv-value fw-medium">{{ caseData.advocate ? (caseData.advocate.first_name + ' ' + caseData.advocate.last_name) : 'Not yet assigned' }}</span>
         </div>
         <div class="kv-row">
           <span class="kv-label">Date Opened</span>
-          <span class="kv-value">{{ caseData.created_at | date:'longDate' }}</span>
+          <span class="kv-value">{{ caseData.case?.created_at | date:'longDate' }}</span>
         </div>
         <div class="kv-row flex-column align-start gap-2 border-0">
           <span class="kv-label">Description</span>
-          <p class="fs-sm m-0" style="white-space: pre-wrap;">{{ caseData.description }}</p>
+          <p class="fs-sm m-0" style="white-space: pre-wrap;">{{ caseData.case?.description }}</p>
         </div>
       </div>
 

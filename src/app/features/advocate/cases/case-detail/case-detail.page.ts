@@ -85,7 +85,14 @@ export class AdvocateCaseDetailPage implements OnInit {
   loadTimeline(event?: any) {
     this.api.get<any>(`/cases/${this.caseId}/history`).subscribe({
       next: (res) => {
-        this.timelineEvents = Array.isArray(res) ? res : (res.data || []);
+        const history = Array.isArray(res) ? res : (res.data || []);
+        this.timelineEvents = history.map((item: any) => ({
+          id: item.id,
+          title: this.formatActionType(item.action_type),
+          description: this.formatActionDescription(item),
+          timestamp: item.created_at,
+          type: this.mapActionType(item.action_type)
+        }));
         this.loading = false;
         if (event) event.target.complete();
         this.cdr.detectChanges();
@@ -97,6 +104,27 @@ export class AdvocateCaseDetailPage implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  private formatActionType(action: string): string {
+    if (!action) return 'Update';
+    return action.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
+  }
+
+  private formatActionDescription(item: any): string {
+    if (item.action_type === 'CASE_CREATED') return 'Case was successfully opened.';
+    if (item.action_type === 'STATUS_CHANGED') return `Status changed from ${this.cleanStatus(item.previous_value)} to ${this.cleanStatus(item.new_value)}.`;
+    return 'Case details updated.';
+  }
+
+  private cleanStatus(val: string): string {
+    if (!val) return 'Unknown';
+    return val.replace('CaseStatus.', '');
+  }
+
+  private mapActionType(action: string): string {
+    if (action === 'CASE_CREATED' || action === 'STATUS_CHANGED') return 'status_change';
+    return 'general';
   }
 
   doRefresh(event: any) {

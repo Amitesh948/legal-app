@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, timer, of } from 'rxjs';
-import { switchMap, takeWhile, catchError, takeUntil, finalize } from 'rxjs/operators';
+import { Subject, timer, of, forkJoin } from 'rxjs';
+import { switchMap, takeWhile, catchError, takeUntil } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ProcessingStatus } from '../../constants/document-processing.constants';
@@ -23,6 +23,7 @@ export class DocumentListItemComponent implements OnInit, OnDestroy {
   aiStatus: ProcessingStatus | null = null;
   aiPolling = false;
   aiError = false;
+  hasSummary = false;
 
   private destroy$ = new Subject<void>();
 
@@ -44,19 +45,34 @@ export class DocumentListItemComponent implements OnInit, OnDestroy {
   }
 
   private checkAiStatus() {
-    this.api.get<any>(`/document-processing/${this.document.id}/processing-status`)
-      .pipe(
-        takeUntil(this.destroy$),
+    // Check both processing-status AND summary availability in parallel.
+    // The processing-status endpoint may show FAILED for OCR/AI jobs
+    // while a summary already exists from a previous successful run.
+    forkJoin({
+      status: this.api.get<any>(`/document-processing/${this.document.id}/processing-status`).pipe(
+        catchError(() => of(null))
+      ),
+      summary: this.api.get<any>(`/document-processing/${this.document.id}/summary`).pipe(
         catchError(() => of(null))
       )
-      .subscribe((res: any) => {
-        if (res && res.overall_status) {
-          this.aiStatus = res.overall_status as ProcessingStatus;
-          if (this.aiStatus === ProcessingStatus.PENDING || this.aiStatus === ProcessingStatus.PROCESSING) {
-            this.startPolling();
-          }
+    })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(({ status, summary }) => {
+      // If a summary already exists, mark as available regardless of job status
+      if (summary && summary.overall_summary) {
+        this.hasSummary = true;
+        this.aiStatus = ProcessingStatus.COMPLETED;
+        return;
+      }
+
+      // Otherwise, rely on the processing-status endpoint
+      if (status && status.overall_status) {
+        this.aiStatus = status.overall_status as ProcessingStatus;
+        if (this.aiStatus === ProcessingStatus.PENDING || this.aiStatus === ProcessingStatus.PROCESSING) {
+          this.startPolling();
         }
-      });
+      }
+    });
   }
 
   runAiSummary(event: Event) {
@@ -67,7 +83,7 @@ export class DocumentListItemComponent implements OnInit, OnDestroy {
     this.aiError = false;
     
     // Check if we need to retry or start fresh
-    const endpoint = this.aiStatus === ProcessingStatus.FAILED 
+    const endpoint = (this.aiStatus === ProcessingStatus.FAILED && !this.hasSummary) 
       ? `/document-processing/${this.document.id}/retry`
       : `/document-processing/${this.document.id}/process`;
 
@@ -96,18 +112,19 @@ export class DocumentListItemComponent implements OnInit, OnDestroy {
         switchMap(() => this.api.get<any>(`/document-processing/${this.document.id}/processing-status`).pipe(
           catchError(() => of({ overall_status: ProcessingStatus.FAILED }))
         )),
-        takeWhile(res => {
+        takeWhile((res: any) => {
           const status = res.overall_status as ProcessingStatus;
           return status !== ProcessingStatus.COMPLETED && status !== ProcessingStatus.FAILED;
         }, true) // true to emit the final value before completing
       )
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           this.aiStatus = res.overall_status as ProcessingStatus;
         },
         complete: () => {
           this.aiPolling = false;
           if (this.aiStatus === ProcessingStatus.COMPLETED) {
+            this.hasSummary = true;
             this.viewSummary(new Event(''));
           } else if (this.aiStatus === ProcessingStatus.FAILED) {
             this.aiError = true;
@@ -126,9 +143,9 @@ export class DocumentListItemComponent implements OnInit, OnDestroy {
 
   get fileIcon(): string {
     const ext = this.document.extension?.toLowerCase() || '';
-    if (ext === 'pdf') return 'pdf';
-    if (['jpg', 'jpeg', 'png', 'gif'].includes(ext)) return 'image';
-    if (['doc', 'docx'].includes(ext)) return 'word';
+    if (ext === 'pdf' || ext === '.pdf') return 'pdf';
+    if (['.jpg', '.jpeg', '.png', '.gif', 'jpg', 'jpeg', 'png', 'gif'].includes(ext)) return 'image';
+    if (['.doc', '.docx', 'doc', 'docx'].includes(ext)) return 'word';
     return 'file';
   }
 

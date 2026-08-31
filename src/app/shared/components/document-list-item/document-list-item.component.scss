@@ -27,18 +27,18 @@
   flex-shrink: 0;
   
   &.icon-pdf {
-    background: #FEF2F2;
-    color: #DC2626;
+    background: var(--danger-50);
+    color: var(--danger-500);
   }
   
   &.icon-image {
-    background: #F0FDF4;
-    color: #16A34A;
+    background: var(--success-50);
+    color: var(--success-500);
   }
   
   &.icon-word {
-    background: #EFF6FF;
-    color: #2563EB;
+    background: var(--info-50);
+    color: var(--info-500);
   }
   
   &.icon-file {

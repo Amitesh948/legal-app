@@ -59,9 +59,9 @@
     <!-- AI Actions (Advocate Only) -->
     <ng-container *ngIf="isAdvocate && !document.isUploading && !document.error">
       
-      <!-- Show "Run AI Summary" if not processed -->
+      <!-- Show "Run AI Summary" if no summary exists and not polling -->
       <button class="btn btn-sm btn-ghost text-brand" 
-              *ngIf="aiStatus !== 'COMPLETED' && !aiPolling"
+              *ngIf="!hasSummary && !aiPolling && aiStatus !== 'COMPLETED'"
               (click)="runAiSummary($event)">
         <span *ngIf="aiStatus !== 'FAILED'">Run AI</span>
         <span *ngIf="aiStatus === 'FAILED'" class="text-danger">Retry AI</span>
@@ -73,9 +73,9 @@
         <span>AI Processing...</span>
       </div>
 
-      <!-- Show "View Summary" if completed -->
+      <!-- Show "View Summary" if summary exists or status is COMPLETED -->
       <button class="btn btn-sm btn-ghost text-brand" 
-              *ngIf="aiStatus === 'COMPLETED'"
+              *ngIf="(hasSummary || aiStatus === 'COMPLETED') && !aiPolling"
               (click)="viewSummary($event)">
         View Summary
       </button>
