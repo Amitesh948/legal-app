@@ -20,12 +20,21 @@ export class CaseCardComponent {
   
   @Output() cardClick = new EventEmitter<void>();
 
+  /** Normalize status — strips the Python enum class prefix if the backend
+   * sends "CaseStatus.NEW" (audit-log style) instead of clean "NEW".
+   * This makes the card resilient both before and after a backend fix. */
+  private get normalizedStatus(): string {
+    if (!this.status) return '';
+    const s = String(this.status);
+    return s.includes('.') ? s.split('.').pop()! : s;
+  }
+
   get statusLabel(): string {
-    return CASE_STATUS_LABELS[this.status as CaseStatus] || this.status;
+    return CASE_STATUS_LABELS[this.normalizedStatus as CaseStatus] || this.normalizedStatus;
   }
 
   get statusClass(): string {
-    switch (this.status as CaseStatus) {
+    switch (this.normalizedStatus as CaseStatus) {
       case CaseStatus.NEW:
       case CaseStatus.AI_PROCESSING:
       case CaseStatus.DOCUMENTS_UPLOADED:

@@ -27,6 +27,7 @@ export class AdvocateProfilePage implements OnInit {
   isEditing = false;
   isSaving = false;
   saveSuccess = false;
+  saveError = '';
   
   editData: any = {};
 
@@ -88,6 +89,7 @@ export class AdvocateProfilePage implements OnInit {
       this.initEditData(); // Cancel edits
     }
     this.saveSuccess = false;
+    this.saveError = '';
   }
 
   saveProfile(): void {
@@ -113,8 +115,9 @@ export class AdvocateProfilePage implements OnInit {
           this.cdr.detectChanges();
         }, 3000);
       },
-      error: () => {
+      error: (err) => {
         this.isSaving = false;
+        this.saveError = err.message || 'Failed to update profile.';
         this.cdr.detectChanges();
       }
     });

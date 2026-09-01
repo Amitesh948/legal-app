@@ -26,14 +26,14 @@
       </button>
 
       <div class="d-flex align-center j-between gap-3 mb-2">
-        <h2 class="m-0 case-title">{{ caseData.title }}</h2>
-        <span class="badge {{ statusClass }}">{{ caseData.status }}</span>
+        <h2 class="m-0 case-title">{{ caseData.case?.title }}</h2>
+        <span class="badge {{ statusClass }}">{{ caseData.case?.status }}</span>
       </div>
       
       <div class="d-flex align-center gap-2 text-secondary fs-sm">
-        <span>{{ caseData.practice_area?.name || 'General Legal' }}</span>
+        <span>{{ caseData.case?.category || 'General Legal' }}</span>
         <span class="meta-dot"></span>
-        <span>Ref: {{ caseData.reference_number || caseData.id }}</span>
+        <span>Ref: {{ caseData.case?.case_number || caseData.case?.id }}</span>
       </div>
     </div>
 
@@ -62,7 +62,7 @@
         </div>
         <div class="kv-row">
           <span class="kv-label">Advocate Assigned</span>
-          <span class="kv-value fw-medium">{{ caseData.advocate ? (caseData.advocate.first_name + ' ' + caseData.advocate.last_name) : 'You' }}</span>
+          <span class="kv-value fw-medium">{{ caseData.advocate ? (caseData.advocate.first_name + ' ' + caseData.advocate.last_name) : 'Not yet assigned' }}</span>
         </div>
         <div class="kv-row">
           <span class="kv-label">Date Opened</span>

@@ -69,7 +69,8 @@ export class AdvocateCasesPage implements OnInit {
     }
     this.loadMoreError = false;
 
-    let url = `/cases?page=${this.page}&limit=10`;
+    const skip = (this.page - 1) * 10;
+    let url = `/cases?skip=${skip}&limit=10`;
     if (this.activeFilter !== 'All') {
       url += `&status=${this.activeFilter}`;
     }

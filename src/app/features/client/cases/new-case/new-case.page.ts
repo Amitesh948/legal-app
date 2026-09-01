@@ -77,10 +77,10 @@ export class NewCasePage {
     this.submitError = '';
 
     const payload = {
-      practice_area_id: this.selectedPracticeAreaId,
+      category: this.selectedPracticeAreaName,
       title: this.caseTitle,
       description: this.caseDescription,
-      // In a real app, file upload might be handled via FormData
+      // In a real app, file upload might be handled via FormData or a separate endpoint
     };
 
     this.api.post<any>('/cases', payload).subscribe({

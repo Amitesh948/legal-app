@@ -39,8 +39,8 @@
         [caseId]="caseItem.id"
         [title]="caseItem.title || 'Untitled Case'"
         [status]="caseItem.status"
-        [practiceArea]="caseItem.practice_area?.name || 'General Legal'"
-        [referenceNumber]="caseItem.reference_number || caseItem.id"
+        [practiceArea]="caseItem.category || 'General Legal'"
+        [referenceNumber]="caseItem.case_number || caseItem.id"
         [lastUpdated]="caseItem.updated_at || caseItem.created_at"
         [hasUnreadMessages]="caseItem.unread_messages > 0"
         (cardClick)="goToDetail(caseItem.id)">

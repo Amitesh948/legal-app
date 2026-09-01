@@ -273,9 +273,9 @@ export class AdvocateCaseDetailPage implements OnInit {
   }
 
   get statusClass(): string {
-    const s = this.caseData?.status?.toLowerCase() || '';
-    if (s === 'open' || s === 'active') return 'badge-info';
-    if (s === 'pending' || s === 'in review') return 'badge-warning';
+    const s = this.caseData?.case?.status?.toLowerCase() || '';
+    if (s === 'open' || s === 'active' || s.includes('new')) return 'badge-info';
+    if (s === 'pending' || s.includes('review')) return 'badge-warning';
     if (s === 'closed' || s === 'completed') return 'badge-success';
     if (s === 'urgent' || s === 'overdue') return 'badge-danger';
     return 'badge-gray';
