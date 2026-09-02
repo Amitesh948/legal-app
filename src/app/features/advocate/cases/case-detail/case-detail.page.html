@@ -78,6 +78,13 @@
       <div class="card bg-gray-50 border-0">
         <app-timeline [events]="timelineEvents"></app-timeline>
       </div>
+
+      <!-- AI Case Analysis (Advocate only) -->
+      <app-ai-case-analysis
+        *ngIf="caseId"
+        [caseId]="caseId"
+        [hasDocuments]="documents.length > 0">
+      </app-ai-case-analysis>
     </div>
 
     <!-- DOCUMENTS TAB -->
@@ -137,11 +144,7 @@
 
     <!-- OPINIONS TAB -->
     <div *ngIf="activeTab === 'Opinions'" class="tab-content">
-      <app-empty-state 
-        title="No Legal Opinions"
-        message="Formal legal opinions you draft will be listed here."
-        icon="newspaper">
-      </app-empty-state>
+      <app-ai-opinion-viewer *ngIf="caseId" [caseId]="caseId"></app-ai-opinion-viewer>
     </div>
 
   </div>

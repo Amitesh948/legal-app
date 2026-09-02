@@ -1,0 +1,197 @@
+.ai-analysis-section {
+  margin-top: 1rem;
+}
+
+/* ---- Trigger Card ---- */
+.analysis-trigger-card {
+  text-align: center;
+}
+
+.ai-icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-brand-light, rgba(99, 102, 241, 0.12));
+  color: var(--color-brand, #6366f1);
+  flex-shrink: 0;
+
+  &--lg {
+    width: 56px;
+    height: 56px;
+  }
+
+  &--sm {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* ---- Generating animation ---- */
+.generating-card {
+  padding: 2rem 1rem;
+}
+
+.generating-animation {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-ring {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid var(--color-brand, #6366f1);
+  opacity: 0.4;
+  animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+/* ---- Results ---- */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-primary, #1e293b);
+
+  &--success {
+    color: var(--color-success, #16a34a);
+  }
+
+  &--warning {
+    color: var(--color-warning, #d97706);
+  }
+
+  &--danger {
+    color: var(--color-danger, #dc2626);
+  }
+}
+
+.card--success-tint {
+  border-left: 3px solid var(--color-success, #16a34a);
+  background: var(--color-success-bg, rgba(22, 163, 74, 0.04));
+}
+
+.card--warning-tint {
+  border-left: 3px solid var(--color-warning, #d97706);
+  background: var(--color-warning-bg, rgba(217, 119, 6, 0.04));
+}
+
+.card--danger-tint {
+  border-left: 3px solid var(--color-danger, #dc2626);
+  background: var(--color-danger-bg, rgba(220, 38, 38, 0.04));
+}
+
+/* Bullet lists */
+.bullet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.5em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-secondary, #64748b);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &--success li::before {
+    background: var(--color-success, #16a34a);
+  }
+
+  &--warning li::before {
+    background: var(--color-warning, #d97706);
+  }
+
+  &--danger li::before {
+    background: var(--color-danger, #dc2626);
+  }
+}
+
+/* Chronology */
+.chronology-list {
+  position: relative;
+  padding-left: 1rem;
+  border-left: 2px solid var(--color-brand-light, rgba(99, 102, 241, 0.2));
+}
+
+.chronology-item {
+  position: relative;
+  padding: 0.5rem 0 0.5rem 1rem;
+  font-size: 0.875rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: -1.35rem;
+    top: 0.85em;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-brand, #6366f1);
+    border: 2px solid var(--bg-primary, #fff);
+  }
+}
+
+.chronology-date {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-brand, #6366f1);
+  margin-bottom: 0.125rem;
+}
+
+.chronology-event {
+  color: var(--text-primary, #1e293b);
+}
+
+/* Precedent item */
+.precedent-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-light, #f1f5f9);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+/* ---- Failed card ---- */
+.analysis-failed-card {
+  text-align: center;
+}

@@ -1,0 +1,31 @@
+.page-container {
+  padding: 1rem;
+}
+
+.opinion-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+.border-top {
+  border-top: 1px solid var(--border-light, #f1f5f9);
+}
+
+.badge-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}

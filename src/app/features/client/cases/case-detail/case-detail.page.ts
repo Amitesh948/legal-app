@@ -10,6 +10,7 @@ import { EmptyStateComponent } from '../../../../shared/components/empty-state/e
 import { TimelineComponent } from '../../../../shared/components/timeline/timeline.component';
 import { DocumentListItemComponent } from '../../../../shared/components/document-list-item/document-list-item.component';
 import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
+import { AiOpinionViewerComponent } from '../../../../shared/components/ai-opinion-viewer/ai-opinion-viewer.component';
 
 @Component({
   selector: 'app-client-case-detail',
@@ -24,7 +25,8 @@ import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-
     EmptyStateComponent,
     TimelineComponent,
     DocumentListItemComponent,
-    ChatRoomComponent
+    ChatRoomComponent,
+    AiOpinionViewerComponent
   ],
   templateUrl: './case-detail.page.html',
   styleUrl: './case-detail.page.scss'

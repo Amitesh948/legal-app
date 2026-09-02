@@ -1,0 +1,240 @@
+<div class="ai-opinion-section">
+
+  <!-- Loading -->
+  <div *ngIf="loading">
+    <app-skeleton-loader></app-skeleton-loader>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="!loading && error">
+    <app-error-state (retry)="loadOpinion()"></app-error-state>
+  </div>
+
+  <!-- Not yet generated: ADVOCATE sees trigger, CLIENT sees waiting message -->
+  <div *ngIf="!loading && !error && !opinion && isAdvocate" class="opinion-trigger-card card text-center">
+    <div class="ai-icon-circle ai-icon-circle--lg mx-auto mb-3">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+    </div>
+    <h4 class="mb-2">AI Legal Opinion</h4>
+    <p class="text-secondary fs-sm mb-4">Generate an AI-drafted legal opinion for this case. The AI will analyze all available case data and produce a comprehensive draft.</p>
+    <button class="btn btn-primary" (click)="triggerGeneration()" [disabled]="isTriggering">
+      <div class="spinner spinner-sm me-2" *ngIf="isTriggering"></div>
+      {{ isTriggering ? 'Starting...' : 'Generate AI Opinion' }}
+    </button>
+  </div>
+
+  <!-- Not yet generated/approved: CLIENT sees waiting message -->
+  <div *ngIf="!loading && !error && !opinion && isClient" class="opinion-trigger-card card text-center">
+    <div class="ai-icon-circle ai-icon-circle--lg mx-auto mb-3">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+      </svg>
+    </div>
+    <h4 class="mb-2">No Legal Opinion Yet</h4>
+    <p class="text-secondary fs-sm m-0">Your advocate has not yet published a legal opinion for this case. You will be able to view it here once it has been approved.</p>
+  </div>
+
+  <!-- Generating (polling) state — advocate only -->
+  <div *ngIf="!loading && isGenerating && isAdvocate" class="generating-card card text-center">
+    <div class="generating-animation mb-4">
+      <div class="pulse-ring"></div>
+      <div class="ai-icon-circle ai-icon-circle--lg">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+      </div>
+    </div>
+    <h4 class="mb-2">Generating Legal Opinion...</h4>
+    <p class="text-secondary fs-sm m-0">Our AI is drafting a comprehensive legal opinion based on the case analysis. This may take a minute.</p>
+  </div>
+
+  <!-- Failed state — advocate only -->
+  <div *ngIf="!loading && !isGenerating && opinion && isFailed && isAdvocate" class="card text-center">
+    <div class="alert alert--warning mb-4">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span>Opinion generation failed. A completed case analysis is required before generating the opinion.</span>
+    </div>
+    <button class="btn btn-primary" (click)="triggerGeneration()" [disabled]="isTriggering">Retry</button>
+  </div>
+
+  <!-- Overwrite Warning Modal -->
+  <div *ngIf="showOverwriteWarning" class="overwrite-overlay">
+    <div class="overwrite-dialog card">
+      <h4 class="mb-3">Overwrite existing draft?</h4>
+      <p class="text-secondary fs-sm mb-4">You have existing advocate notes and opinion text. Re-generating the AI opinion will overwrite the AI-generated fields. Your advocate notes will be preserved.</p>
+      <div class="d-flex gap-3">
+        <button class="btn btn-ghost flex-1" (click)="cancelOverwrite()">Cancel</button>
+        <button class="btn btn-danger flex-1" (click)="confirmOverwrite()">Overwrite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results: Draft / Approved opinion -->
+  <div *ngIf="!loading && !isGenerating && opinion && (isDraft || isApproved)" class="opinion-results">
+
+    <!-- Approved Opinion: Formal document header (client-facing polish) -->
+    <div *ngIf="isApproved" class="opinion-doc-header card mb-5">
+      <div class="d-flex align-center gap-3 mb-3">
+        <div class="doc-icon-circle">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <path d="M9 15l2 2 4-4"></path>
+          </svg>
+        </div>
+        <div>
+          <h4 class="m-0 fs-base fw-semibold">Legal Opinion</h4>
+          <p class="m-0 fs-xs text-secondary">
+            Approved{{ opinion.approved_at ? ' on ' + (opinion.approved_at | date:'longDate') : '' }}
+            · Version {{ opinion.version }}
+          </p>
+        </div>
+        <span class="badge badge-success ms-auto">Approved</span>
+      </div>
+    </div>
+
+    <!-- Winning Probability & Risk Level -->
+    <div class="d-flex gap-4 mb-5 metrics-row">
+      <!-- Winning Probability -->
+      <div class="card flex-1 text-center prob-card">
+        <p class="fs-sm text-secondary mb-2 fw-medium">Winning Probability</p>
+        <div class="prob-indicator {{ probabilityClass }}">
+          <svg viewBox="0 0 120 120" class="prob-ring">
+            <circle cx="60" cy="60" r="52" class="prob-ring__bg"></circle>
+            <circle cx="60" cy="60" r="52"
+              class="prob-ring__fill"
+              [attr.stroke-dasharray]="326.73"
+              [attr.stroke-dashoffset]="326.73 - (326.73 * winningProbability / 100)">
+            </circle>
+          </svg>
+          <span class="prob-value">{{ winningProbability }}%</span>
+        </div>
+      </div>
+
+      <!-- Risk Level -->
+      <div class="card flex-1 text-center risk-card">
+        <p class="fs-sm text-secondary mb-2 fw-medium">Risk Level</p>
+        <div class="risk-badge-wrapper">
+          <span class="badge badge-lg {{ riskLevelClass }}">{{ riskLevelLabel }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Draft Header with Re-generate button (advocate only) -->
+    <div *ngIf="isDraft" class="d-flex align-center j-between mb-4">
+      <div class="d-flex align-center gap-2">
+        <span class="badge badge-warning">Draft</span>
+        <span class="text-secondary fs-sm">v{{ opinion.version }}</span>
+      </div>
+      <button *ngIf="isAdvocate" class="btn btn-sm btn-outline-primary" (click)="triggerGeneration()" [disabled]="isTriggering" title="Re-generate">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Brief Facts -->
+    <div class="card mb-4" *ngIf="opinion.brief_facts">
+      <h5 class="section-title mb-3">Brief Facts</h5>
+      <p class="fs-sm m-0" style="white-space: pre-wrap;">{{ opinion.brief_facts }}</p>
+    </div>
+
+    <!-- Issues -->
+    <div class="card mb-4" *ngIf="opinion.issues && opinion.issues.length > 0">
+      <h5 class="section-title mb-3">Issues</h5>
+      <ul class="bullet-list">
+        <li *ngFor="let issue of opinion.issues">{{ issue }}</li>
+      </ul>
+    </div>
+
+    <!-- Applicable Law -->
+    <div class="card mb-4" *ngIf="opinion.applicable_law && opinion.applicable_law.length > 0">
+      <h5 class="section-title mb-3">Applicable Law</h5>
+      <ul class="bullet-list">
+        <li *ngFor="let law of opinion.applicable_law">{{ law }}</li>
+      </ul>
+    </div>
+
+    <!-- Legal Analysis -->
+    <div class="card mb-4" *ngIf="opinion.legal_analysis">
+      <h5 class="section-title mb-3">Legal Analysis</h5>
+      <p class="fs-sm m-0" style="white-space: pre-wrap;">{{ opinion.legal_analysis }}</p>
+    </div>
+
+    <!-- Strengths / Weaknesses -->
+    <div class="card mb-4 card--success-tint" *ngIf="opinion.strengths && opinion.strengths.length > 0">
+      <h5 class="section-title section-title--success mb-3">Strengths</h5>
+      <ul class="bullet-list bullet-list--success">
+        <li *ngFor="let s of opinion.strengths">{{ s }}</li>
+      </ul>
+    </div>
+
+    <div class="card mb-4 card--warning-tint" *ngIf="opinion.weaknesses && opinion.weaknesses.length > 0">
+      <h5 class="section-title section-title--warning mb-3">Weaknesses</h5>
+      <ul class="bullet-list bullet-list--warning">
+        <li *ngFor="let w of opinion.weaknesses">{{ w }}</li>
+      </ul>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="card mb-4" *ngIf="opinion.conclusion">
+      <h5 class="section-title mb-3">Conclusion</h5>
+      <p class="fs-sm m-0" style="white-space: pre-wrap;">{{ opinion.conclusion }}</p>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="card mb-4" *ngIf="opinion.recommendations && opinion.recommendations.length > 0">
+      <h5 class="section-title mb-3">Recommendations</h5>
+      <ul class="bullet-list">
+        <li *ngFor="let rec of opinion.recommendations">{{ rec }}</li>
+      </ul>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="card mb-4 card--muted" *ngIf="opinion.disclaimer">
+      <p class="fs-xs text-secondary m-0" style="font-style: italic;">{{ opinion.disclaimer }}</p>
+    </div>
+
+    <!-- Advocate's Professional Input — advocate only, never shown to clients -->
+    <div class="card mb-4 advocate-input-section" *ngIf="isDraft && isAdvocate">
+      <h5 class="section-title mb-3">Your Professional Opinion</h5>
+
+      <div *ngIf="saveError" class="alert alert--danger mb-3">
+        <span>{{ saveError }}</span>
+      </div>
+      <div *ngIf="saveSuccess" class="alert alert--success mb-3">
+        <span>Saved successfully.</span>
+      </div>
+
+      <div class="form-field mb-4">
+        <label class="fs-sm fw-medium mb-1">Advocate Opinion</label>
+        <textarea class="form-textarea" rows="4" placeholder="Add your professional opinion..." [(ngModel)]="editAdvocateOpinion"></textarea>
+      </div>
+
+      <div class="form-field mb-4">
+        <label class="fs-sm fw-medium mb-1">Notes</label>
+        <textarea class="form-textarea" rows="3" placeholder="Additional notes..." [(ngModel)]="editAdvocateNotes"></textarea>
+      </div>
+
+      <button class="btn btn-primary w-100" (click)="saveAdvocateFields()" [disabled]="isSaving">
+        <div class="spinner spinner-sm me-2" *ngIf="isSaving"></div>
+        {{ isSaving ? 'Saving...' : 'Save Notes' }}
+      </button>
+    </div>
+
+  </div>
+
+</div>

@@ -11,6 +11,8 @@ import { TimelineComponent } from '../../../../shared/components/timeline/timeli
 import { DocumentListItemComponent } from '../../../../shared/components/document-list-item/document-list-item.component';
 import { AiSummaryModalComponent } from '../../../../shared/components/ai-summary-modal/ai-summary-modal.component';
 import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
+import { AiCaseAnalysisComponent } from '../../../../shared/components/ai-case-analysis/ai-case-analysis.component';
+import { AiOpinionViewerComponent } from '../../../../shared/components/ai-opinion-viewer/ai-opinion-viewer.component';
 
 @Component({
   selector: 'app-advocate-case-detail',
@@ -25,7 +27,9 @@ import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-
     EmptyStateComponent,
     TimelineComponent,
     DocumentListItemComponent,
-    ChatRoomComponent
+    ChatRoomComponent,
+    AiCaseAnalysisComponent,
+    AiOpinionViewerComponent
   ],
   templateUrl: './case-detail.page.html',
   styleUrl: './case-detail.page.scss'

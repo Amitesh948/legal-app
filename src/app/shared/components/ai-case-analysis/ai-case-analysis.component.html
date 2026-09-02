@@ -1,0 +1,190 @@
+<!-- AI Case Analysis Section -->
+<div class="ai-analysis-section">
+
+  <!-- Not yet generated state -->
+  <div *ngIf="!loading && !error && !analysis" class="analysis-trigger-card card">
+    <div class="d-flex align-center gap-3 mb-3">
+      <div class="ai-icon-circle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"></path>
+          <path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"></path>
+          <path d="M16 16h6M19 13v6M5 16H2M5 19v-6"></path>
+        </svg>
+      </div>
+      <div>
+        <h4 class="m-0 fs-base fw-semibold">AI Case Analysis</h4>
+        <p class="m-0 fs-sm text-secondary">Generate an AI-powered analysis of this case</p>
+      </div>
+    </div>
+    <button
+      class="btn btn-primary w-100"
+      (click)="triggerAnalysis()"
+      [disabled]="isTriggering">
+      <div class="spinner spinner-sm me-2" *ngIf="isTriggering"></div>
+      {{ isTriggering ? 'Starting Analysis...' : 'Run Case Analysis' }}
+    </button>
+  </div>
+
+  <!-- Loading initial fetch -->
+  <div *ngIf="loading">
+    <app-skeleton-loader></app-skeleton-loader>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="!loading && error">
+    <app-error-state (retry)="loadAnalysis()"></app-error-state>
+  </div>
+
+  <!-- Generating (polling) state -->
+  <div *ngIf="!loading && isGenerating" class="generating-card card text-center">
+    <div class="generating-animation mb-4">
+      <div class="pulse-ring"></div>
+      <div class="ai-icon-circle ai-icon-circle--lg">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"></path>
+          <path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"></path>
+          <path d="M16 16h6M19 13v6M5 16H2M5 19v-6"></path>
+        </svg>
+      </div>
+    </div>
+    <h4 class="mb-2">Analyzing Case...</h4>
+    <p class="text-secondary fs-sm m-0">Our AI is reviewing all documents and generating a comprehensive analysis. This may take a minute.</p>
+  </div>
+
+  <!-- Failed state -->
+  <div *ngIf="!loading && !isGenerating && analysis && isFailed" class="analysis-failed-card card">
+    <div class="alert alert--warning mb-4">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+        <line x1="12" y1="9" x2="12" y2="13"></line>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      <span>{{ failedMessage }}</span>
+    </div>
+    <button class="btn btn-primary w-100" (click)="triggerAnalysis()" [disabled]="isTriggering">
+      <div class="spinner spinner-sm me-2" *ngIf="isTriggering"></div>
+      {{ isTriggering ? 'Retrying...' : 'Retry Analysis' }}
+    </button>
+  </div>
+
+  <!-- Results state -->
+  <div *ngIf="!loading && !isGenerating && analysis && isReady" class="analysis-results">
+
+    <!-- Header -->
+    <div class="d-flex align-center j-between mb-4">
+      <div class="d-flex align-center gap-2">
+        <div class="ai-icon-circle ai-icon-circle--sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93L12 22"></path>
+            <path d="M12 2a4 4 0 0 0-4 4c0 1.95 1.4 3.58 3.25 3.93"></path>
+          </svg>
+        </div>
+        <h4 class="m-0 fs-base">AI Case Analysis</h4>
+      </div>
+      <button class="btn btn-sm btn-outline-primary" (click)="triggerAnalysis()" [disabled]="isTriggering" title="Re-run analysis">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="card mb-4" *ngIf="analysis.executive_summary">
+      <h5 class="section-title mb-3">Executive Summary</h5>
+      <p class="fs-sm m-0" style="white-space: pre-wrap;">{{ analysis.executive_summary }}</p>
+    </div>
+
+    <!-- Chronology -->
+    <div class="card mb-4" *ngIf="analysis.chronology && analysis.chronology.length > 0">
+      <h5 class="section-title mb-3">Chronology</h5>
+      <div class="chronology-list">
+        <div class="chronology-item" *ngFor="let entry of analysis.chronology">
+          <span class="chronology-date" *ngIf="getChronologyDate(entry)">{{ getChronologyDate(entry) }}</span>
+          <span class="chronology-event">{{ getChronologyEvent(entry) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Material Facts -->
+    <div class="card mb-4" *ngIf="analysis.material_facts && analysis.material_facts.length > 0">
+      <h5 class="section-title mb-3">Material Facts</h5>
+      <ul class="bullet-list">
+        <li *ngFor="let fact of analysis.material_facts">{{ fact }}</li>
+      </ul>
+    </div>
+
+    <!-- Strengths -->
+    <div class="card mb-4 card--success-tint" *ngIf="analysis.strengths && analysis.strengths.length > 0">
+      <h5 class="section-title section-title--success mb-3">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        Strengths
+      </h5>
+      <ul class="bullet-list bullet-list--success">
+        <li *ngFor="let s of analysis.strengths">{{ s }}</li>
+      </ul>
+    </div>
+
+    <!-- Weaknesses -->
+    <div class="card mb-4 card--warning-tint" *ngIf="analysis.weaknesses && analysis.weaknesses.length > 0">
+      <h5 class="section-title section-title--warning mb-3">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        Weaknesses
+      </h5>
+      <ul class="bullet-list bullet-list--warning">
+        <li *ngFor="let w of analysis.weaknesses">{{ w }}</li>
+      </ul>
+    </div>
+
+    <!-- Legal Issues -->
+    <div class="card mb-4" *ngIf="analysis.legal_issues && analysis.legal_issues.length > 0">
+      <h5 class="section-title mb-3">Legal Issues</h5>
+      <ul class="bullet-list">
+        <li *ngFor="let issue of analysis.legal_issues">{{ issue }}</li>
+      </ul>
+    </div>
+
+    <!-- Applicable Laws -->
+    <div class="card mb-4" *ngIf="analysis.applicable_laws && analysis.applicable_laws.length > 0">
+      <h5 class="section-title mb-3">Applicable Laws</h5>
+      <ul class="bullet-list">
+        <li *ngFor="let law of analysis.applicable_laws">{{ law }}</li>
+      </ul>
+    </div>
+
+    <!-- Risks -->
+    <div class="card mb-4 card--danger-tint" *ngIf="analysis.risks && analysis.risks.length > 0">
+      <h5 class="section-title section-title--danger mb-3">Risks</h5>
+      <ul class="bullet-list bullet-list--danger">
+        <li *ngFor="let risk of analysis.risks">{{ risk }}</li>
+      </ul>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="card mb-4" *ngIf="analysis.recommendations && analysis.recommendations.length > 0">
+      <h5 class="section-title mb-3">Recommendations</h5>
+      <ul class="bullet-list">
+        <li *ngFor="let rec of analysis.recommendations">{{ rec }}</li>
+      </ul>
+    </div>
+
+    <!-- Suggested Precedents -->
+    <div class="card mb-4" *ngIf="analysis.suggested_precedents && analysis.suggested_precedents.length > 0">
+      <h5 class="section-title mb-3">Suggested Precedents</h5>
+      <div class="precedent-item" *ngFor="let p of analysis.suggested_precedents">
+        <span class="fw-medium">{{ p.case_name || p['case'] || 'Unknown' }}</span>
+        <span class="text-secondary fs-sm" *ngIf="p.citation"> — {{ p.citation }}</span>
+        <p class="fs-sm text-secondary m-0 mt-1" *ngIf="p.relevance">{{ p.relevance }}</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>

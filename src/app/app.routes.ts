@@ -138,5 +138,9 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: 'auth/login'
+  },
+  {
+    path: 'advocate-citations',
+    loadComponent: () => import('./features/advocate/citations/advocate-citations/advocate-citations.page').then( m => m.AdvocateCitationsPage)
   }
 ];

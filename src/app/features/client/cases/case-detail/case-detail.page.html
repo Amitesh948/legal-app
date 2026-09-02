@@ -138,11 +138,7 @@
 
     <!-- OPINIONS TAB -->
     <div *ngIf="activeTab === 'Opinions'" class="tab-content">
-      <app-empty-state 
-        title="No Legal Opinions"
-        message="Formal legal opinions delivered by your advocate will be listed here."
-        icon="newspaper">
-      </app-empty-state>
+      <app-ai-opinion-viewer *ngIf="caseId" [caseId]="caseId"></app-ai-opinion-viewer>
     </div>
 
   </div>
