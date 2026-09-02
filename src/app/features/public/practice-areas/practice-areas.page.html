@@ -1,0 +1,53 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Practice Areas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-gray-50">
+  <div class="page-container py-4 px-4">
+    
+    <!-- Loading State -->
+    <div *ngIf="loading">
+      <app-skeleton-loader></app-skeleton-loader>
+      <app-skeleton-loader></app-skeleton-loader>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error">
+      <app-error-state (retry)="loadData()"></app-error-state>
+    </div>
+
+    <!-- Data State -->
+    <ng-container *ngIf="!loading && !error">
+      <div class="text-center mb-5">
+        <h2 class="section-title mb-2">Our Expertise</h2>
+        <p class="text-secondary fs-sm">Comprehensive legal representation across multiple domains.</p>
+      </div>
+
+      <div *ngIf="areas.length > 0; else noAreas" class="areas-grid">
+        <div class="area-card card p-4" *ngFor="let area of areas">
+          
+          <div class="icon-wrapper mb-3 text-primary" [innerHTML]="getSafeSvg(area.icon_svg)"></div>
+          
+          <h4 class="m-0 mb-2 fs-base fw-semibold">{{ area.title }}</h4>
+          <p class="m-0 fs-sm text-secondary line-clamp-3 mb-4">{{ area.description }}</p>
+          
+          <a routerLink="/auth/login" [queryParams]="{ returnUrl: '/client/cases/new', prefill_area: area.id }" class="btn btn-sm btn-outline-primary mt-auto">
+            {{ area.action_text || 'Book Consultation' }}
+          </a>
+        </div>
+      </div>
+
+      <ng-template #noAreas>
+        <div class="text-center py-5 text-secondary">
+          No practice areas published yet.
+        </div>
+      </ng-template>
+
+    </ng-container>
+  </div>
+</ion-content>

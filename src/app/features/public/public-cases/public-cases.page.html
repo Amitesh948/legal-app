@@ -1,0 +1,76 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Public Case Repository</ion-title>
+  </ion-toolbar>
+  <ion-toolbar class="px-2 pb-2">
+    <ion-searchbar 
+      placeholder="Search cases by keyword, category..."
+      [debounce]="300"
+      (ionInput)="handleSearch($event)">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-gray-50">
+  <div class="page-container py-4 px-4">
+    
+    <!-- Loading State -->
+    <div *ngIf="loading">
+      <app-skeleton-loader></app-skeleton-loader>
+      <app-skeleton-loader></app-skeleton-loader>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error">
+      <app-error-state (retry)="loadData()"></app-error-state>
+    </div>
+
+    <!-- Data State -->
+    <ng-container *ngIf="!loading && !error">
+      
+      <div *ngIf="filteredCases.length > 0; else noCases" class="cases-list">
+        <div class="case-card card clickable mb-4" *ngFor="let case of filteredCases" [routerLink]="['/public-cases', case.slug]">
+          
+          <div class="case-cover" *ngIf="case.cover_image_url" [style.backgroundImage]="'url(' + (case.cover_image_url | imageUrl) + ')'">
+            <span class="badge badge-success category-badge" *ngIf="case.category?.name">{{ case.category.name }}</span>
+          </div>
+
+          <div class="case-content p-4">
+            <!-- Ensure category badge shows even if no image exists -->
+            <span class="badge badge-success mb-2 d-inline-block" *ngIf="!case.cover_image_url && case.category?.name">
+              {{ case.category.name }}
+            </span>
+
+            <h3 class="title m-0 mb-2 fw-semibold">{{ case.title }}</h3>
+            <p class="summary text-secondary fs-sm mb-3">{{ case.summary }}</p>
+            
+            <div class="tags d-flex flex-wrap gap-2" *ngIf="case.tags?.length">
+              <span class="badge badge-gray" *ngFor="let tag of case.tags">{{ tag.name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noCases>
+        <!-- Distinct empty states based on whether it's a search filtering or genuinely empty -->
+        <app-empty-state 
+          *ngIf="searchQuery"
+          title="No Matches Found"
+          [message]="'No public cases match your search for \'' + searchQuery + '\'.'"
+          icon="search">
+        </app-empty-state>
+        <app-empty-state 
+          *ngIf="!searchQuery"
+          title="No Cases Available"
+          message="There are no public cases published in the repository at this time."
+          icon="briefcase">
+        </app-empty-state>
+      </ng-template>
+
+    </ng-container>
+
+  </div>
+</ion-content>

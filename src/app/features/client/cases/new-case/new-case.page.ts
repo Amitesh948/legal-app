@@ -1,39 +1,80 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { IonContent, IonInput, IonTextarea } from '@ionic/angular';
 import { ApiService } from '../../../../core/services/api.service';
+import { PracticeArea } from '../../../../core/models/public.model';
+import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
+import { ErrorStateComponent } from '../../../../shared/components/error-state/error-state.component';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-new-case',
   standalone: true,
-  imports: [CommonModule, FormsModule, IonContent, IonInput, IonTextarea],
+  imports: [CommonModule, FormsModule, IonContent, IonInput, IonTextarea, SkeletonLoaderComponent, ErrorStateComponent],
   templateUrl: './new-case.page.html',
   styleUrl: './new-case.page.scss'
 })
-export class NewCasePage {
+export class NewCasePage implements OnInit {
   currentStep = 1;
   totalSteps = 3;
   isSubmitting = false;
   submitError = '';
 
+  loadingAreas = true;
+  areasError = false;
+
   // Form Data
-  selectedPracticeAreaId: number | null = null;
+  selectedPracticeAreaId: string | null = null;
   caseTitle: string = '';
   caseDescription: string = '';
   attachedFile: File | null = null;
 
-  practiceAreas = [
-    { id: 1, name: 'Family Law', icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75' },
-    { id: 2, name: 'Corporate Law', icon: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z' },
-    { id: 3, name: 'Real Estate', icon: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z' },
-    { id: 4, name: 'Criminal Defense', icon: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z' },
-    { id: 5, name: 'Immigration', icon: 'M2 12h4l2-9 4 18 2-9h4' },
-    { id: 6, name: 'Other', icon: 'M12 2v20 M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6' }
-  ];
+  practiceAreas: PracticeArea[] = [];
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(
+    private api: ApiService, 
+    private router: Router,
+    private route: ActivatedRoute,
+    private sanitizer: DomSanitizer
+  ) {}
+
+  ngOnInit() {
+    this.loadPracticeAreas();
+  }
+
+  loadPracticeAreas() {
+    this.loadingAreas = true;
+    this.areasError = false;
+
+    this.api.get<PracticeArea[]>('/practice-areas/public').subscribe({
+      next: (res) => {
+        this.practiceAreas = (res || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        this.loadingAreas = false;
+        this.checkPrefill();
+      },
+      error: () => {
+        this.areasError = true;
+        this.loadingAreas = false;
+      }
+    });
+  }
+
+  checkPrefill() {
+    const prefill = this.route.snapshot.queryParams['prefill_area'];
+    if (prefill) {
+      // prefill is now the direct UUID from the public page
+      const match = this.practiceAreas.find(p => p.id === prefill);
+      if (match) {
+        this.selectedPracticeAreaId = match.id;
+      }
+    }
+  }
+
+  getSafeSvg(svgString: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(svgString);
+  }
 
   get canProceed(): boolean {
     if (this.currentStep === 1) return this.selectedPracticeAreaId !== null;
@@ -42,10 +83,10 @@ export class NewCasePage {
   }
 
   get selectedPracticeAreaName(): string {
-    return this.practiceAreas.find(p => p.id === this.selectedPracticeAreaId)?.name || '';
+    return this.practiceAreas.find(p => p.id === this.selectedPracticeAreaId)?.title || '';
   }
 
-  selectPracticeArea(id: number) {
+  selectPracticeArea(id: string) {
     this.selectedPracticeAreaId = id;
   }
 

@@ -1,0 +1,62 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Legal Insights</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-gray-50">
+  <div class="page-container py-4 px-4">
+    
+    <!-- Loading State -->
+    <div *ngIf="loading && blogs.length === 0">
+      <app-skeleton-loader></app-skeleton-loader>
+      <app-skeleton-loader></app-skeleton-loader>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error">
+      <app-error-state (retry)="loadBlogs()"></app-error-state>
+    </div>
+
+    <!-- Data State -->
+    <ng-container *ngIf="!loading && !error">
+      <div *ngIf="blogs.length > 0; else noBlogs" class="blogs-list">
+        <div class="blog-card card clickable mb-4" *ngFor="let blog of blogs" [routerLink]="['/blogs', blog.slug]">
+          
+          <div class="blog-cover" *ngIf="blog.cover_image_url" [style.backgroundImage]="'url(' + (blog.cover_image_url | imageUrl) + ')'">
+            <span class="badge badge-primary category-badge" *ngIf="blog.category?.name">{{ blog.category.name }}</span>
+          </div>
+
+          <div class="blog-content p-4">
+            <h3 class="title m-0 mb-2 fw-semibold">{{ blog.title }}</h3>
+            <p class="excerpt text-secondary fs-sm line-clamp-3 mb-4">{{ blog.excerpt }}</p>
+            
+            <div class="blog-meta d-flex align-center j-between border-top pt-3 text-secondary fs-xs">
+              <span class="author fw-medium text-primary">
+                {{ blog.author?.first_name }} {{ blog.author?.last_name }}
+              </span>
+              <span class="date">{{ blog.created_at | date:'mediumDate' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noBlogs>
+        <app-empty-state 
+          title="No Articles Found"
+          message="Check back later for new legal insights and updates."
+          icon="document-text">
+        </app-empty-state>
+      </ng-template>
+
+      <!-- Infinite Scroll -->
+      <ion-infinite-scroll *ngIf="hasMore" (ionInfinite)="loadBlogs($event)">
+        <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more articles..."></ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+    </ng-container>
+
+  </div>
+</ion-content>

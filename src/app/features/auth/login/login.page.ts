@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { IonInput } from '@ionic/angular';
 import { AuthService } from '../../../core/services/auth.service';
 import { LoginRequest } from '../../../core/models/user.model';
@@ -24,6 +24,7 @@ export class LoginPage {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -50,10 +51,18 @@ export class LoginPage {
       next: (user) => {
         this.loading = false;
         this.cdr.detectChanges();
-        if (user.role === 'advocate') {
-          this.router.navigate(['/advocate']);
+        
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'];
+        if (returnUrl) {
+          // Pass along any other query parameters like prefill_area
+          const { returnUrl: _, ...otherParams } = this.route.snapshot.queryParams;
+          this.router.navigate([returnUrl], { queryParams: otherParams });
         } else {
-          this.router.navigate(['/client']);
+          if (user.role === 'advocate') {
+            this.router.navigate(['/advocate']);
+          } else {
+            this.router.navigate(['/client']);
+          }
         }
       },
       error: (err) => {

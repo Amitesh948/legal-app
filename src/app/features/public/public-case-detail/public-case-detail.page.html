@@ -1,0 +1,48 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/public-cases"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Case Study</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-gray-50">
+  
+  <div *ngIf="loading" class="p-4">
+    <app-skeleton-loader></app-skeleton-loader>
+  </div>
+
+  <div *ngIf="!loading && error" class="p-4">
+    <app-error-state></app-error-state>
+  </div>
+
+  <div *ngIf="!loading && !error && publicCase" class="case-detail">
+    
+    <div class="case-hero" *ngIf="publicCase.cover_image_url" [style.backgroundImage]="'url(' + (publicCase.cover_image_url | imageUrl) + ')'">
+    </div>
+
+    <div class="page-container px-4 py-4 content-card">
+      <div class="card p-4">
+        
+        <div class="d-flex align-center gap-2 mb-3">
+          <span class="badge badge-success" *ngIf="publicCase.category?.name">{{ publicCase.category.name }}</span>
+        </div>
+
+        <h1 class="title mb-3 fw-bold">{{ publicCase.title }}</h1>
+        <p class="summary text-secondary fs-base mb-4 pb-4 border-bottom lh-relaxed">
+          {{ publicCase.summary }}
+        </p>
+        
+        <!-- Safe HTML Injection -->
+        <div class="rich-text-content" [innerHTML]="getSafeContent(publicCase.content)"></div>
+
+        <div class="tags mt-5 pt-4 border-top d-flex flex-wrap gap-2" *ngIf="publicCase.tags?.length">
+          <span class="badge badge-gray" *ngFor="let tag of publicCase.tags">{{ tag.name }}</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</ion-content>

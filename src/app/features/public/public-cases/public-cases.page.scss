@@ -1,0 +1,35 @@
+.case-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.case-cover {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.category-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.badge-gray {
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+}

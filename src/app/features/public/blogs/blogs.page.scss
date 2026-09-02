@@ -1,0 +1,40 @@
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.blog-cover {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.category-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
+
+.border-top {
+  border-top: 1px solid var(--color-border);
+}

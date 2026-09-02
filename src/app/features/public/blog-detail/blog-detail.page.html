@@ -1,0 +1,55 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/blogs"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Article</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="bg-gray-50">
+  
+  <div *ngIf="loading" class="p-4">
+    <app-skeleton-loader></app-skeleton-loader>
+  </div>
+
+  <div *ngIf="!loading && error" class="p-4">
+    <app-error-state></app-error-state>
+  </div>
+
+  <div *ngIf="!loading && !error && blog" class="blog-detail">
+    
+    <div class="blog-hero" *ngIf="blog.cover_image_url" [style.backgroundImage]="'url(' + (blog.cover_image_url | imageUrl) + ')'">
+    </div>
+
+    <div class="page-container px-4 py-4 content-card">
+      <div class="card p-4">
+        
+        <div class="d-flex align-center gap-2 mb-3">
+          <span class="badge badge-primary" *ngIf="blog.category?.name">{{ blog.category.name }}</span>
+          <span class="text-secondary fs-sm">{{ blog.created_at | date:'mediumDate' }}</span>
+        </div>
+
+        <h1 class="title mb-3 fw-bold">{{ blog.title }}</h1>
+        
+        <div class="author-info d-flex align-center gap-2 mb-4 pb-4 border-bottom">
+          <div class="avatar avatar-sm bg-brand-100 text-primary d-flex align-center j-center fw-bold">
+            {{ blog.author?.first_name?.[0] }}{{ blog.author?.last_name?.[0] }}
+          </div>
+          <span class="fw-medium text-secondary">
+            By {{ blog.author?.first_name }} {{ blog.author?.last_name }}
+          </span>
+        </div>
+
+        <!-- Safe HTML Injection -->
+        <div class="rich-text-content" [innerHTML]="getSafeContent(blog.content)"></div>
+
+        <div class="tags mt-5 pt-4 border-top d-flex flex-wrap gap-2" *ngIf="blog.tags?.length">
+          <span class="badge badge-gray" *ngFor="let tag of blog.tags">{{ tag.name }}</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</ion-content>

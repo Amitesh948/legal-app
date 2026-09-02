@@ -1,0 +1,113 @@
+<ion-content class="bg-gray-50">
+  <div class="landing-page">
+    
+    <!-- Top Header Navigation -->
+    <header class="public-header d-flex align-center j-between px-4 py-3 bg-white">
+      <div class="brand fw-bold fs-lg text-primary">LEGAL AI</div>
+      <div class="auth-ctas d-flex gap-2">
+        <a routerLink="/auth/login" class="btn btn-sm btn-outline-primary">Log In</a>
+        <a routerLink="/auth/register" class="btn btn-sm btn-primary">Sign Up</a>
+      </div>
+    </header>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="p-4">
+      <app-skeleton-loader></app-skeleton-loader>
+      <app-skeleton-loader></app-skeleton-loader>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error" class="p-4">
+      <app-error-state (retry)="loadData()"></app-error-state>
+    </div>
+
+    <ng-container *ngIf="!loading && !error">
+      
+      <!-- Feature 1a: Hero Slider (CSS scroll-snap) -->
+      <section class="hero-section">
+        <div class="slider-container" *ngIf="sliders.length > 0; else noSliders">
+          <div class="slide" *ngFor="let slide of sliders" [style.backgroundImage]="'url(' + (slide.image_url | imageUrl) + ')'">
+            <div class="slide-overlay">
+              <div class="slide-content text-center px-4">
+                <span *ngIf="slide.subtitle" class="subtitle mb-2 d-block text-uppercase fw-semibold">{{ slide.subtitle }}</span>
+                <h1 class="title text-white mb-4 fw-bold">{{ slide.title }}</h1>
+                <a [routerLink]="getRouteForTargetUrl(slide.target_url)" class="btn btn-lg btn-primary">{{ slide.button_text }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noSliders>
+          <div class="slide bg-brand-900">
+            <div class="slide-content text-center px-4 text-white">
+              <h1 class="title mb-4">Empowering Legal Strategy with AI</h1>
+              <a routerLink="/auth/register" class="btn btn-lg btn-primary">Get Started</a>
+            </div>
+          </div>
+        </ng-template>
+      </section>
+
+      <!-- Section: Discover Links -->
+      <section class="discover-links-section py-5 bg-white">
+        <div class="container px-4 text-center">
+          <h2 class="section-title mb-4">Explore Our Resources</h2>
+          <div class="d-flex j-center flex-wrap gap-3">
+            <a routerLink="/practice-areas" class="btn btn-outline-primary">Practice Areas</a>
+            <a routerLink="/public-cases" class="btn btn-outline-primary">Public Cases</a>
+            <a routerLink="/blogs" class="btn btn-outline-primary">Legal Insights</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Feature 1b: Testimonials -->
+      <section class="testimonials-section py-5">
+        <div class="container px-4">
+          <h2 class="section-title text-center mb-4">What Our Clients Say</h2>
+          
+          <div *ngIf="testimonials.length > 0; else noTestimonials" class="testimonials-grid">
+            <div class="testimonial-card card p-4" *ngFor="let t of testimonials">
+              
+              <div class="d-flex align-center gap-3 mb-3">
+                <img *ngIf="t.client_image_url" [src]="t.client_image_url | imageUrl" class="avatar avatar-md" alt="{{ t.client_name }}" />
+                <app-avatar *ngIf="!t.client_image_url" [firstName]="t.client_name" [size]="48"></app-avatar>
+                
+                <div>
+                  <h4 class="m-0 fs-base fw-semibold">{{ t.client_name }}</h4>
+                  <p class="m-0 fs-xs text-secondary">{{ t.client_designation }}</p>
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <div class="stars mb-3">
+                <svg *ngFor="let _ of getStars(t.rating)" width="16" height="16" viewBox="0 0 24 24" fill="var(--status-warning-text)" class="star-icon">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                </svg>
+                <svg *ngFor="let _ of getEmptyStars(t.rating)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--status-warning-text)" stroke-width="2" class="star-icon">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                </svg>
+              </div>
+
+              <p class="m-0 text-secondary fs-sm lh-relaxed">"{{ t.content }}"</p>
+            </div>
+          </div>
+
+          <ng-template #noTestimonials>
+            <div class="text-center py-4 text-secondary">
+              No testimonials available yet.
+            </div>
+          </ng-template>
+
+        </div>
+      </section>
+
+      <!-- Footer CTA -->
+      <section class="footer-cta bg-brand-900 text-white text-center py-5">
+        <div class="container px-4">
+          <h2 class="mb-3 text-white">Ready to streamline your legal practice?</h2>
+          <p class="text-white opacity-80 mb-4">Join advocates and clients already using our platform.</p>
+          <a routerLink="/auth/register" class="btn btn-lg btn-primary">Create an Account</a>
+        </div>
+      </section>
+
+    </ng-container>
+  </div>
+</ion-content>

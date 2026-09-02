@@ -129,18 +129,50 @@ export const routes: Routes = [
     ]
   },
 
-  // ── Default Redirect ──
+  // ── Public Routes (Phase 5) ──
   {
     path: '',
-    redirectTo: 'auth/login',
+    loadComponent: () => import('./features/public/landing/landing.page').then( m => m.LandingPage),
     pathMatch: 'full'
   },
   {
-    path: '**',
-    redirectTo: 'auth/login'
+    path: 'practice-areas',
+    loadComponent: () => import('./features/public/practice-areas/practice-areas.page').then( m => m.PracticeAreasPage)
+  },
+  {
+    path: 'blogs',
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/public/blogs/blogs.page').then( m => m.BlogsPage)
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./features/public/blog-detail/blog-detail.page').then( m => m.BlogDetailPage)
+      }
+    ]
+  },
+  {
+    path: 'public-cases',
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./features/public/public-cases/public-cases.page').then( m => m.PublicCasesPage)
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./features/public/public-case-detail/public-case-detail.page').then( m => m.PublicCaseDetailPage)
+      }
+    ]
   },
   {
     path: 'advocate-citations',
     loadComponent: () => import('./features/advocate/citations/advocate-citations/advocate-citations.page').then( m => m.AdvocateCitationsPage)
+  },
+  
+  // ── Default Redirect ──
+  {
+    path: '**',
+    redirectTo: ''
   }
 ];

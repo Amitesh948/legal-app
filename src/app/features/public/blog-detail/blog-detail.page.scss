@@ -1,0 +1,82 @@
+.blog-hero {
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  
+  @media (min-width: 768px) {
+    height: 350px;
+  }
+}
+
+.content-card {
+  margin-top: -60px;
+  position: relative;
+  z-index: 10;
+}
+
+.title {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-tight);
+}
+
+.avatar {
+  border-radius: 50%;
+  
+  &.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-size-xs);
+  }
+}
+
+.border-bottom {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.border-top {
+  border-top: 1px solid var(--color-border);
+}
+
+.badge-gray {
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+/* Base styles for rich text */
+.rich-text-content {
+  ::ng-deep {
+    h2, h3, h4 {
+      color: var(--color-text-primary);
+      margin-top: 1.5em;
+      margin-bottom: 0.75em;
+      font-weight: var(--font-weight-semibold);
+    }
+    
+    p {
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: 1.25em;
+    }
+    
+    ul, ol {
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+      padding-left: 1.5em;
+      margin-bottom: 1.25em;
+      
+      li {
+        margin-bottom: 0.5em;
+      }
+    }
+    
+    blockquote {
+      border-left: 4px solid var(--brand-500);
+      padding-left: 1em;
+      margin-left: 0;
+      color: var(--color-text-primary);
+      font-style: italic;
+    }
+  }
+}

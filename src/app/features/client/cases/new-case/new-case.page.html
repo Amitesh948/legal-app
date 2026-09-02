@@ -42,18 +42,25 @@
       <h4 class="mb-2">What kind of legal help do you need?</h4>
       <p class="text-secondary fs-sm mb-5">Select the practice area that best fits your situation.</p>
 
-      <div class="practice-grid">
+      <app-skeleton-loader *ngIf="loadingAreas"></app-skeleton-loader>
+      
+      <app-error-state 
+        *ngIf="areasError" 
+        icon="alert-circle" 
+        title="Failed to load practice areas" 
+        message="Please try again." 
+        actionLabel="Retry" 
+        (action)="loadPracticeAreas()">
+      </app-error-state>
+
+      <div class="practice-grid" *ngIf="!loadingAreas && !areasError">
         <button 
           *ngFor="let area of practiceAreas" 
           class="practice-card" 
           [class.selected]="selectedPracticeAreaId === area.id"
           (click)="selectPracticeArea(area.id)">
-          <div class="practice-card__icon">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path [attr.d]="area.icon"></path>
-            </svg>
-          </div>
-          <span class="practice-card__name">{{ area.name }}</span>
+          <div class="practice-card__icon" [innerHTML]="getSafeSvg(area.icon_svg)"></div>
+          <span class="practice-card__name">{{ area.title }}</span>
         </button>
       </div>
       
