@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, RouterModule } from '@angular/router';
 import { IonContent } from '@ionic/angular';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { BottomNavComponent, NavItem } from '../../shared/components/bottom-nav/bottom-nav.component';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 
 @Component({
   selector: 'app-client-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, IonContent, BottomNavComponent, AvatarComponent],
+  imports: [CommonModule, RouterModule, RouterOutlet, IonContent, BottomNavComponent],
   templateUrl: './client-layout.component.html',
   styleUrl: './client-layout.component.scss'
 })
-export class ClientLayoutComponent {
+export class ClientLayoutComponent implements OnInit, OnDestroy {
   navItems: NavItem[] = [
     {
       label: 'Home',
@@ -42,8 +44,25 @@ export class ClientLayoutComponent {
     }
   ];
 
+  unreadCount = 0;
+  private sub?: Subscription;
+
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationService: NotificationService,
+    private cdr: ChangeDetectorRef
   ) {}
+  
+  ngOnInit() {
+    this.sub = this.notificationService.unreadCount$.subscribe(count => {
+      this.unreadCount = count;
+      this.cdr.detectChanges();
+    });
+    this.notificationService.refreshUnreadCount();
+  }
+  
+  ngOnDestroy() {
+    if (this.sub) this.sub.unsubscribe();
+  }
 }

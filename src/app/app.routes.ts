@@ -62,6 +62,11 @@ export const routes: Routes = [
         ]
       },
       {
+        path: 'payments',
+        loadComponent: () =>
+          import('./features/client/payments/client-payments.page').then(m => m.ClientPaymentsPage)
+      },
+      {
         path: 'messages',
         loadComponent: () =>
           import('./features/client/messages/client-messages.page').then(m => m.ClientMessagesPage)
@@ -70,6 +75,16 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./features/client/profile/client-profile.page').then(m => m.ClientProfilePage)
+      },
+      {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/notifications/notifications.page').then(m => m.NotificationsPage)
+      },
+      {
+        path: 'settings/notifications',
+        loadComponent: () =>
+          import('./features/settings/notification-settings/notification-settings.page').then(m => m.NotificationSettingsPage)
       },
       {
         path: '',
@@ -120,6 +135,16 @@ export const routes: Routes = [
         path: 'profile',
         loadComponent: () =>
           import('./features/advocate/profile/advocate-profile.page').then(m => m.AdvocateProfilePage)
+      },
+      {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/notifications/notifications.page').then(m => m.NotificationsPage)
+      },
+      {
+        path: 'settings/notifications',
+        loadComponent: () =>
+          import('./features/settings/notification-settings/notification-settings.page').then(m => m.NotificationSettingsPage)
       },
       {
         path: '',

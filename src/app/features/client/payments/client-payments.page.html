@@ -1,0 +1,70 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Invoices & Payments</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="loadData($event, true)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <app-skeleton-loader *ngIf="loading && payments.length === 0" type="list"></app-skeleton-loader>
+
+  <app-error-state 
+    *ngIf="error" 
+    message="Failed to load payment history. Please try again."
+    (retry)="loadData(null, true)">
+  </app-error-state>
+
+  <app-empty-state
+    *ngIf="!loading && !error && payments.length === 0"
+    icon="receipt-outline"
+    title="No Payments Found"
+    message="You do not have any invoices or payment history.">
+  </app-empty-state>
+
+  <div class="payments-container" *ngIf="!loading && !error && payments.length > 0">
+    
+    <div class="status-message error" *ngIf="verifyErrorText">
+      {{ verifyErrorText }}
+    </div>
+
+    <div class="status-message neutral" *ngIf="cancelText">
+      {{ cancelText }}
+    </div>
+
+    <ion-list lines="none" class="payment-list">
+      <ion-item *ngFor="let payment of payments" class="payment-card">
+        <ion-label>
+          <div class="payment-header">
+            <h2>{{ payment.currency }} {{ payment.amount | number:'1.2-2' }}</h2>
+            <ion-badge [color]="getStatusColor(payment.status)">
+              {{ formatStatus(payment.status) }}
+            </ion-badge>
+          </div>
+          <p class="payment-meta">
+            <span>Date: {{ payment.created_at | date:'mediumDate' }}</span>
+            <span *ngIf="payment.case?.case_number"> • Case #{{ payment.case?.case_number }}</span>
+          </p>
+          <div class="payment-actions" *ngIf="payment.status === 'PENDING' || payment.status === 'CREATED'">
+            <ion-button 
+              size="small" 
+              (click)="payNow(payment)" 
+              [disabled]="activePaymentId === payment.id">
+              <ion-spinner *ngIf="activePaymentId === payment.id" name="dots"></ion-spinner>
+              <span *ngIf="activePaymentId !== payment.id">Pay Now</span>
+            </ion-button>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-infinite-scroll (ionInfinite)="loadData($event)" [disabled]="!hasMore">
+      <ion-infinite-scroll-content></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </div>
+</ion-content>

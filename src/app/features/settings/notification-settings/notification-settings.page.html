@@ -1,0 +1,159 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Notification Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="savePreferences()" [disabled]="saving || !preferences">
+        <ion-spinner *ngIf="saving" name="crescent"></ion-spinner>
+        <span *ngIf="!saving">Save</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Loading State -->
+  <app-skeleton-loader *ngIf="loading"></app-skeleton-loader>
+
+  <!-- Error State -->
+  <app-error-state 
+    *ngIf="error" 
+    message="Failed to load preferences. Please try again."
+    (retry)="loadPreferences()">
+  </app-error-state>
+
+  <!-- Content -->
+  <div class="settings-container" *ngIf="!loading && !error && preferences">
+    
+    <!-- Success Message -->
+    <div class="status-message success" *ngIf="saveSuccess">
+      Settings saved successfully!
+    </div>
+
+    <!-- Error Message -->
+    <div class="status-message error" *ngIf="saveError">
+      Failed to save settings. Please check your connection.
+    </div>
+
+    <!-- Delivery Channels -->
+    <ion-list lines="full" class="settings-list">
+      <ion-list-header>
+        <ion-label>Delivery Channels</ion-label>
+      </ion-list-header>
+      
+      <ion-item>
+        <ion-label>
+          <h2>Email Notifications</h2>
+          <p>Receive updates directly to your inbox.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.email_enabled" slot="end"></ion-toggle>
+      </ion-item>
+      
+      <ion-item>
+        <ion-label>
+          <h2>In-App Notifications</h2>
+          <p>Show notifications within the app.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.in_app_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>Push Notifications</h2>
+          <p>Receive alerts on your device screen.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.push_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>SMS Notifications</h2>
+          <p>Receive important alerts via text message.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.sms_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>WhatsApp Notifications</h2>
+          <p>Get updates on WhatsApp.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.whatsapp_enabled" slot="end"></ion-toggle>
+      </ion-item>
+    </ion-list>
+
+    <!-- Notification Categories -->
+    <ion-list lines="full" class="settings-list">
+      <ion-list-header>
+        <ion-label>Update Categories</ion-label>
+      </ion-list-header>
+      
+      <ion-item>
+        <ion-label>
+          <h2>Case Updates</h2>
+          <p>Alerts about case status and deadlines.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.case_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>Document Updates</h2>
+          <p>When new documents are uploaded or modified.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.document_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>Payment Updates</h2>
+          <p>Invoices, receipts, and payment status changes.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.payment_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>AI Updates</h2>
+          <p>Alerts when AI analysis is complete.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.ai_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>Report Updates</h2>
+          <p>When generated reports are ready.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.report_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>Account Updates</h2>
+          <p>Changes to your profile and security settings.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.account_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>System Updates</h2>
+          <p>Platform maintenance and general announcements.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.system_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>Marketing & Offers</h2>
+          <p>Promotions and special updates.</p>
+        </ion-label>
+        <ion-toggle [(ngModel)]="preferences.marketing_updates_enabled" slot="end"></ion-toggle>
+      </ion-item>
+    </ion-list>
+
+  </div>
+</ion-content>
