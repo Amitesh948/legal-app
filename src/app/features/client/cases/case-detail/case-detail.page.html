@@ -35,6 +35,12 @@
         <span class="meta-dot"></span>
         <span>Ref: {{ caseData.case?.case_number || caseData.case?.id }}</span>
       </div>
+
+      <div class="mt-4" *ngIf="caseData.case?.status === 'PAYMENT_PENDING' || caseData.case?.case_fee">
+        <button class="btn btn-primary" routerLink="/client/payments">
+          View & Pay Invoice
+        </button>
+      </div>
     </div>
 
     <!-- Custom Tab Bar -->

@@ -1,0 +1,27 @@
+<ion-content class="ion-padding">
+  <div class="pending-container">
+    <ion-icon [name]="iconName" [color]="iconColor"></ion-icon>
+    
+    <h2>{{ title }}</h2>
+    
+    <p class="description">
+      {{ description }}
+    </p>
+
+    <div class="status-box">
+      <ion-label color="medium">Current Status</ion-label>
+      <ion-text [color]="iconColor">
+        <h3>{{ statusLabel }}</h3>
+      </ion-text>
+    </div>
+    
+    <ion-button expand="block" (click)="refreshStatus()" [disabled]="isChecking">
+      <ion-spinner *ngIf="isChecking" name="crescent"></ion-spinner>
+      <span *ngIf="!isChecking">Refresh Status</span>
+    </ion-button>
+    
+    <ion-button expand="block" fill="clear" color="medium" routerLink="/login" routerDirection="root">
+      Log Out
+    </ion-button>
+  </div>
+</ion-content>

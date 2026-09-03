@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
-import { User } from '../../../core/models/user.model';
 import { AdvocateDashboard } from '../../../core/models/dashboard.model';
+import { AdvocateStatusService } from '../../../core/services/advocate-status.service';
 import { StatCardComponent } from '../../../shared/components/stat-card/stat-card.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
@@ -22,7 +22,8 @@ import { AvatarComponent } from '../../../shared/components/avatar/avatar.compon
   styleUrl: './advocate-dashboard.page.scss'
 })
 export class AdvocateDashboardPage implements OnInit {
-  user: User | null = null;
+  user: any | null = null;
+  advocateStatus = '';
   dashboard: AdvocateDashboard | null = null;
   loading = true;
   error = false;
@@ -32,11 +33,16 @@ export class AdvocateDashboardPage implements OnInit {
   constructor(
     private authService: AuthService,
     private dashboardService: DashboardService,
+    private statusService: AdvocateStatusService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.user = this.authService.getCurrentUser();
+    this.statusService.getStatus().subscribe(res => {
+      this.advocateStatus = res?.user?.status || '';
+      this.cdr.detectChanges();
+    });
     this.loadDashboard();
   }
 

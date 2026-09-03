@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { tap, catchError, map, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ApiService } from './api.service';
 import { TokenService } from './token.service';
+import { AdvocateStatusService } from './advocate-status.service';
 import {
   User,
   LoginRequest,
@@ -27,7 +28,8 @@ export class AuthService {
   constructor(
     private api: ApiService,
     private tokenService: TokenService,
-    private router: Router
+    private router: Router,
+    private injector: Injector
   ) {}
 
   /** Called once during app bootstrap to restore session if token exists. */
@@ -77,6 +79,11 @@ export class AuthService {
   }
 
   logout(): void {
+    try {
+      const statusService = this.injector.get(AdvocateStatusService);
+      statusService.clearCache();
+    } catch(e) {}
+
     const refreshToken = this.tokenService.getRefreshToken();
     if (refreshToken) {
       this.api.post('/auth/logout', { refresh_token: refreshToken }).subscribe({

@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { ApiService } from './api.service';
+import { AdvocateStatusService } from './advocate-status.service';
 import {
   ClientProfile,
   ClientProfileUpdate,
@@ -10,7 +12,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private injector: Injector) {}
 
   /* ── Client ── */
   getClientProfile(): Observable<ClientProfile> {
@@ -27,6 +29,13 @@ export class ProfileService {
   }
 
   updateAdvocateProfile(data: any): Observable<AdvocateFullProfile> {
-    return this.api.put<AdvocateFullProfile>('/advocates/me', data);
+    return this.api.put<AdvocateFullProfile>('/advocates/me', data).pipe(
+      tap(() => {
+        try {
+          const statusService = this.injector.get(AdvocateStatusService);
+          statusService.clearCache();
+        } catch(e) {}
+      })
+    );
   }
 }

@@ -1,0 +1,28 @@
+<ion-content class="ion-padding">
+  <div class="rejected-container">
+    <ion-icon name="close-circle-outline" color="danger"></ion-icon>
+    
+    <h2>Application Not Approved</h2>
+    
+    <p class="description">
+      Unfortunately, we were unable to approve your application to join as an Advocate at this time based on the details provided.
+    </p>
+
+    <div class="status-box">
+      <ion-label color="medium">Current Status</ion-label>
+      <h3>Action Required</h3>
+    </div>
+    
+    <p class="resubmit-text">
+      You may review and update your professional profile and Bar Council details. Any updates will automatically resubmit your profile for re-review.
+    </p>
+    
+    <ion-button expand="block" routerLink="/advocate/profile" routerDirection="root">
+      Review Profile
+    </ion-button>
+    
+    <ion-button expand="block" fill="clear" color="medium" routerLink="/login" routerDirection="root">
+      Log Out
+    </ion-button>
+  </div>
+</ion-content>

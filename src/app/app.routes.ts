@@ -4,6 +4,8 @@ import { roleGuard } from './core/guards/role.guard';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ClientLayoutComponent } from './layouts/client-layout/client-layout.component';
 import { AdvocateLayoutComponent } from './layouts/advocate-layout/advocate-layout.component';
+import { advocateOnboardingGuard } from './core/guards/advocate-onboarding.guard';
+import { advocateNewCaseGuard } from './core/guards/advocate-new-case.guard';
 
 export const routes: Routes = [
   // ── Auth Routes ──
@@ -103,11 +105,13 @@ export const routes: Routes = [
     children: [
       {
         path: 'home',
+        canActivate: [advocateOnboardingGuard],
         loadComponent: () =>
           import('./features/advocate/dashboard/advocate-dashboard.page').then(m => m.AdvocateDashboardPage)
       },
       {
         path: 'cases',
+        canActivate: [advocateOnboardingGuard],
         children: [
           {
             path: '',
@@ -123,11 +127,13 @@ export const routes: Routes = [
       },
       {
         path: 'messages',
+        canActivate: [advocateOnboardingGuard],
         loadComponent: () =>
           import('./features/advocate/messages/advocate-messages.page').then(m => m.AdvocateMessagesPage)
       },
       {
         path: 'opinions',
+        canActivate: [advocateOnboardingGuard],
         loadComponent: () =>
           import('./features/advocate/opinions/advocate-opinions.page').then(m => m.AdvocateOpinionsPage)
       },
@@ -138,6 +144,7 @@ export const routes: Routes = [
       },
       {
         path: 'notifications',
+        canActivate: [advocateOnboardingGuard],
         loadComponent: () =>
           import('./features/notifications/notifications.page').then(m => m.NotificationsPage)
       },
@@ -152,6 +159,20 @@ export const routes: Routes = [
         pathMatch: 'full'
       }
     ]
+  },
+  {
+    path: 'advocate/onboarding-pending',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['advocate'] },
+    loadComponent: () =>
+      import('./features/advocate/onboarding-pending/onboarding-pending.component').then(m => m.OnboardingPendingComponent)
+  },
+  {
+    path: 'advocate/onboarding-rejected',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['advocate'] },
+    loadComponent: () =>
+      import('./features/advocate/onboarding-rejected/onboarding-rejected.component').then(m => m.OnboardingRejectedComponent)
   },
 
   // ── Public Routes (Phase 5) ──
@@ -179,6 +200,7 @@ export const routes: Routes = [
   },
   {
     path: 'public-cases',
+    canActivate: [advocateNewCaseGuard],
     children: [
       {
         path: '',

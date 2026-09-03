@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -37,7 +37,8 @@ export class NewCasePage implements OnInit {
     private api: ApiService, 
     private router: Router,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -47,16 +48,19 @@ export class NewCasePage implements OnInit {
   loadPracticeAreas() {
     this.loadingAreas = true;
     this.areasError = false;
+    this.cdr.detectChanges();
 
     this.api.get<PracticeArea[]>('/practice-areas/public').subscribe({
       next: (res) => {
         this.practiceAreas = (res || []).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
         this.loadingAreas = false;
         this.checkPrefill();
+        this.cdr.detectChanges();
       },
       error: () => {
         this.areasError = true;
         this.loadingAreas = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -88,24 +92,28 @@ export class NewCasePage implements OnInit {
 
   selectPracticeArea(id: string) {
     this.selectedPracticeAreaId = id;
+    this.cdr.detectChanges();
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
       this.attachedFile = file;
+      this.cdr.detectChanges();
     }
   }
 
   nextStep() {
     if (this.canProceed && this.currentStep < this.totalSteps) {
       this.currentStep++;
+      this.cdr.detectChanges();
     }
   }
 
   prevStep() {
     if (this.currentStep > 1) {
       this.currentStep--;
+      this.cdr.detectChanges();
     } else {
       this.router.navigate(['/client/cases']);
     }
@@ -116,6 +124,7 @@ export class NewCasePage implements OnInit {
     
     this.isSubmitting = true;
     this.submitError = '';
+    this.cdr.detectChanges();
 
     const payload = {
       category: this.selectedPracticeAreaName,
@@ -127,6 +136,7 @@ export class NewCasePage implements OnInit {
     this.api.post<any>('/cases', payload).subscribe({
       next: (res) => {
         this.isSubmitting = false;
+        this.cdr.detectChanges();
         const newCaseId = res.id || res.data?.id;
         if (newCaseId) {
           this.router.navigate(['/client/cases', newCaseId]);
@@ -137,6 +147,7 @@ export class NewCasePage implements OnInit {
       error: (err) => {
         this.isSubmitting = false;
         this.submitError = err.message || 'Failed to create case. Please try again.';
+        this.cdr.detectChanges();
       }
     });
   }
