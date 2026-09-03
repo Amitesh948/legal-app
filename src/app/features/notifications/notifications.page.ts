@@ -8,6 +8,8 @@ import { SkeletonLoaderComponent } from '../../shared/components/skeleton-loader
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
+import { AuthService } from '../../core/services/auth.service';
+
 @Component({
   selector: 'app-notifications',
   standalone: true,
@@ -33,12 +35,21 @@ export class NotificationsPage implements OnInit {
   notifications: NotificationItem[] = [];
   loading = true;
   error = false;
+  fallbackUrl = '/';
   
   constructor(
     private notificationService: NotificationService, 
     private cdr: ChangeDetectorRef,
-    private router: Router
-  ) {}
+    private router: Router,
+    private authService: AuthService
+  ) {
+    const user = this.authService.getCurrentUser();
+    if (user?.role?.toLowerCase() === 'client') {
+      this.fallbackUrl = '/client/home';
+    } else if (user?.role?.toLowerCase() === 'advocate') {
+      this.fallbackUrl = '/advocate/dashboard';
+    }
+  }
 
   ngOnInit() {
     this.loadData();
@@ -124,7 +135,19 @@ export class NotificationsPage implements OnInit {
     }
 
     if (item.action_url) {
-      this.router.navigateByUrl(item.action_url);
+      // Split the URL string into segments for router.navigate
+      // Remove leading slash to avoid empty first segment, then split by '/'
+      const segments = item.action_url.replace(/^\//, '').split('/');
+      
+      // If the backend returned an absolute path that doesn't include the role prefix (like /cases/123 instead of /client/cases/123)
+      // we need to dynamically inject the correct layout prefix to keep them in the authenticated shell.
+      if (segments[0] === 'cases' || segments[0] === 'payments' || segments[0] === 'documents') {
+        const user = this.authService.getCurrentUser();
+        const role = user?.role?.toLowerCase() || 'client';
+        segments.unshift(role);
+      }
+      
+      this.router.navigate(['/', ...segments]);
     } else if (item.entity_id && item.entity_type) {
       // Basic fallback navigation for known entity types
       const type = String(item.entity_type).toLowerCase();

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IonContent, IonInput, IonTextarea } from '@ionic/angular';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ApiService } from '../../../../core/services/api.service';
 import { PracticeArea } from '../../../../core/models/public.model';
 import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
@@ -130,10 +132,24 @@ export class NewCasePage implements OnInit {
       category: this.selectedPracticeAreaName,
       title: this.caseTitle,
       description: this.caseDescription,
-      // In a real app, file upload might be handled via FormData or a separate endpoint
     };
 
-    this.api.post<any>('/cases', payload).subscribe({
+    this.api.post<any>('/cases', payload).pipe(
+      switchMap((res) => {
+        const newCaseId = res.id || res.data?.id;
+        if (this.attachedFile && newCaseId) {
+          // Upload document to the separate documents endpoint
+          const formData = new FormData();
+          formData.append('case_id', newCaseId);
+          formData.append('category', 'OTHER');
+          formData.append('file', this.attachedFile, this.attachedFile.name);
+          return this.api.postFormData<any>('/documents/upload', formData).pipe(
+            switchMap(() => of(res)) // Return the original case response after upload
+          );
+        }
+        return of(res);
+      })
+    ).subscribe({
       next: (res) => {
         this.isSubmitting = false;
         this.cdr.detectChanges();

@@ -36,9 +36,21 @@
         <span>Ref: {{ caseData.case?.case_number || caseData.case?.id }}</span>
       </div>
 
-      <div class="mt-4" *ngIf="caseData.case?.status === 'PAYMENT_PENDING' || caseData.case?.case_fee">
-        <button class="btn btn-primary" routerLink="/client/payments">
-          View & Pay Invoice
+      <div class="mt-4" *ngIf="caseData.case?.status === 'PAYMENT_PENDING' || (caseData.case?.case_fee && caseData.case?.status !== 'PAYMENT_COMPLETED')">
+        
+        <div class="status-message error mb-3" *ngIf="paymentError">
+          {{ paymentError }}
+        </div>
+
+        <div class="status-message neutral mb-3" *ngIf="paymentCancelText">
+          {{ paymentCancelText }}
+        </div>
+
+        <button class="btn btn-primary" 
+          (click)="initiateCasePayment()" 
+          [disabled]="isPaying">
+          <span *ngIf="isPaying" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          {{ isPaying ? 'Processing...' : 'Pay Case Fee' }}
         </button>
       </div>
     </div>

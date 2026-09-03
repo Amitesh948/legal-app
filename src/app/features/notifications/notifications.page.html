@@ -1,9 +1,9 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Notifications</ion-title>
+    <!-- <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="fallbackUrl"></ion-back-button>
+    </ion-buttons> -->
+    <ion-title  class="notification-title">Notifications</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="markAllAsRead()" *ngIf="notifications.length > 0">
         Mark All Read

@@ -11,6 +11,7 @@ import { TimelineComponent } from '../../../../shared/components/timeline/timeli
 import { DocumentListItemComponent } from '../../../../shared/components/document-list-item/document-list-item.component';
 import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
 import { AiOpinionViewerComponent } from '../../../../shared/components/ai-opinion-viewer/ai-opinion-viewer.component';
+import { RazorpayService } from '../../../../core/services/razorpay.service';
 
 @Component({
   selector: 'app-client-case-detail',
@@ -49,12 +50,85 @@ export class ClientCaseDetailPage implements OnInit {
   documentsError = false;
   documentsFetched = false;
 
+  // Payment UI State
+  isPaying = false;
+  paymentError: string | null = null;
+  paymentCancelText: string | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private api: ApiService,
+    private razorpayService: RazorpayService,
     private cdr: ChangeDetectorRef
   ) {}
+
+  currentPaymentId: string | null = null;
+
+  initiateCasePayment() {
+    if (this.isPaying || !this.caseData?.case?.case_fee || !this.caseId) return;
+
+    this.isPaying = true;
+    this.paymentError = null;
+    this.paymentCancelText = null;
+    this.currentPaymentId = null;
+    
+    // Explicitly reset the service state to IDLE before subscribing
+    // This purges any stale terminal states from previous payments
+    this.razorpayService.reset();
+    
+    this.cdr.detectChanges();
+
+    // Subscribe to state changes from the centralized Razorpay service
+    const sub = this.razorpayService.status$.subscribe(status => {
+      // Ignore initial IDLE or other state emissions before CREATING_ORDER
+      if (status.state === 'IDLE' || status.state === 'CREATING_ORDER') return;
+
+      // Capture the payment ID once the order is created and we enter AWAITING_PAYMENT
+      if (status.state === 'AWAITING_PAYMENT' && status.paymentId) {
+        this.currentPaymentId = status.paymentId;
+        return;
+      }
+
+      // Guard: Ensure terminal states belong to THIS payment attempt
+      if (this.currentPaymentId && status.paymentId !== this.currentPaymentId) return;
+
+      switch(status.state) {
+        case 'SUCCESS':
+          // MITIGATION: Refetch case data from the API to get real backend status,
+          // instead of only mutating local state (which would show PAYMENT_COMPLETED
+          // even if the backend failed to update the case status due to an invoice crash).
+          this.isPaying = false;
+          this.loadCaseDetails();
+          sub.unsubscribe();
+          break;
+        case 'FAILED':
+          this.paymentError = status.error || 'Payment failed.';
+          this.isPaying = false;
+          sub.unsubscribe();
+          break;
+        case 'CANCELLED':
+          this.paymentCancelText = status.error || 'Payment cancelled.';
+          this.isPaying = false;
+          sub.unsubscribe();
+          break;
+        case 'UNCONFIRMED':
+          this.paymentError = status.error || 'Payment unconfirmed.';
+          this.isPaying = false;
+          sub.unsubscribe();
+          break;
+        // VERIFYING is transitional
+      }
+      this.cdr.detectChanges();
+    });
+
+    this.razorpayService.initiatePayment(this.caseId, this.caseData.case.case_fee).catch(err => {
+      this.isPaying = false;
+      this.paymentError = 'Failed to initialize order on server.';
+      sub.unsubscribe();
+      this.cdr.detectChanges();
+    });
+  }
 
   ngOnInit() {
     this.caseId = this.route.snapshot.paramMap.get('id');
