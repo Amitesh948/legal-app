@@ -328,9 +328,22 @@ export class ClientCaseDetailPage implements OnInit {
     if (doc.error) {
       this.performUpload(doc);
     } else if (!doc.isUploading) {
-      // Download or preview
-      console.log('Document tapped for preview/download:', doc);
-      // In a real app we would open the file or use Browser plugin
+      console.log('Downloading document:', doc);
+      this.api.getBlob(`/documents/download/${doc.id}`).subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = doc.original_filename || 'document';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (err) => {
+          alert('Failed to download document. ' + err.message);
+        }
+      });
     }
   }
 
