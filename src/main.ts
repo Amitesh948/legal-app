@@ -14,6 +14,7 @@ import { APP_INITIALIZER } from '@angular/core';
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { jwtInterceptor } from './app/core/interceptors/jwt.interceptor';
+import { errorInterceptor } from './app/core/interceptors/error.interceptor';
 import { AuthService } from './app/core/services/auth.service';
 
 /** Factory function to initialize auth on app startup */
@@ -26,7 +27,7 @@ bootstrapApplication(AppComponent, {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular({ mode: 'md' }),
     provideRouter(routes, withPreloading(PreloadAllModules), withComponentInputBinding()),
-    provideHttpClient(withInterceptors([jwtInterceptor])),
+    provideHttpClient(withInterceptors([jwtInterceptor, errorInterceptor])),
     {
       provide: APP_INITIALIZER,
       useFactory: initializeAuth,

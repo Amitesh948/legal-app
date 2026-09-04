@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IonContent, IonInput, IonTextarea } from '@ionic/angular';
 import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, catchError } from 'rxjs/operators';
 import { ApiService } from '../../../../core/services/api.service';
 import { PracticeArea } from '../../../../core/models/public.model';
 import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
@@ -99,10 +99,23 @@ export class NewCasePage implements OnInit {
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
-    if (file) {
-      this.attachedFile = file;
-      this.cdr.detectChanges();
+    if (!file) return;
+
+    const maxMb = 10;
+    if (file.size > maxMb * 1024 * 1024) {
+      alert(`File is too large. Max size is ${maxMb}MB.`);
+      event.target.value = '';
+      return;
     }
+    const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!allowed.includes(file.type)) {
+      alert('Unsupported file type. Please upload a PDF, Image, or Word document.');
+      event.target.value = '';
+      return;
+    }
+
+    this.attachedFile = file;
+    this.cdr.detectChanges();
   }
 
   nextStep() {
@@ -140,10 +153,16 @@ export class NewCasePage implements OnInit {
         if (this.attachedFile && newCaseId) {
           // Upload document to the separate documents endpoint
           const formData = new FormData();
+          formData.append('file', this.attachedFile);
           formData.append('case_id', newCaseId);
           formData.append('category', 'OTHER');
-          formData.append('file', this.attachedFile, this.attachedFile.name);
+          
           return this.api.postFormData<any>('/documents/upload', formData).pipe(
+            catchError((err) => {
+              console.error('Document upload failed:', err);
+              alert('Case was created, but the document upload failed. You can try uploading it again from the case details page.');
+              return of(res);
+            }),
             switchMap(() => of(res)) // Return the original case response after upload
           );
         }

@@ -1,0 +1,71 @@
+<div class="chat-page-wrapper">
+  
+  <div class="chat-header">
+    <button class="btn btn-ghost p-0" (click)="goBack()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+      <span class="ms-2">Back</span>
+    </button>
+    <h3 class="m-0">AI Assistant</h3>
+    <div style="width: 60px;"></div> <!-- spacer -->
+  </div>
+
+  <div class="chat-content-area" #scrollContainer>
+    
+    <div *ngIf="loading" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading conversation...</p>
+    </div>
+
+    <app-error-state
+      *ngIf="error"
+      [message]="errorMessage"
+      (retry)="loadHistory()">
+    </app-error-state>
+
+    <div class="chat-container" *ngIf="!loading && !error">
+      <!-- Messages Loop -->
+      <div *ngFor="let msg of messages" 
+           class="message-wrapper" 
+           [ngClass]="{'user-msg': msg.role === 'USER', 'ai-msg': msg.role === 'AI', 'system-msg': msg.role === 'SYSTEM'}">
+        
+        <div class="message-bubble">
+          <p>{{ msg.message }}</p>
+          
+          <!-- Sources list for AI messages -->
+          <div class="sources-container" *ngIf="msg.sources && msg.sources.length > 0">
+            <span class="source-label">Sources:</span>
+            <div class="source-chip" *ngFor="let source of msg.sources">
+              <ion-icon name="document-text-outline"></ion-icon>
+              {{ source.document_name }} <span *ngIf="source.page">(p.{{ source.page }})</span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+
+      <!-- Typing Indicator -->
+      <div class="message-wrapper ai-msg" *ngIf="isTyping">
+        <div class="message-bubble typing-indicator">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-footer" *ngIf="!error">
+    <div class="input-container">
+      <textarea
+        class="form-control"
+        [(ngModel)]="inputText"
+        placeholder="Ask a question about this case..."
+        rows="1"
+        (keyup.enter)="sendMessage()">
+      </textarea>
+      <button class="btn btn-primary" [disabled]="!inputText.trim() || isTyping" (click)="sendMessage()">
+        Send
+      </button>
+    </div>
+  </div>
+</div>

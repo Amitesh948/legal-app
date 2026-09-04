@@ -148,6 +148,12 @@ export class AdvocateCaseDetailPage implements OnInit {
     }
   }
 
+  openAiChat() {
+    if (this.caseId) {
+      this.router.navigate(['/advocate/cases', this.caseId, 'ai-chat']);
+    }
+  }
+
   loadDocuments(event?: any) {
     this.documentsLoading = true;
     this.documentsError = false;

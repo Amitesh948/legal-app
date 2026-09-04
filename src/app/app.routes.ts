@@ -122,6 +122,11 @@ export const routes: Routes = [
             path: ':id',
             loadComponent: () =>
               import('./features/advocate/cases/case-detail/case-detail.page').then(m => m.AdvocateCaseDetailPage)
+          },
+          {
+            path: ':id/ai-chat',
+            loadComponent: () =>
+              import('./features/advocate/cases/ai-chat/ai-chat.page').then(m => m.AiChatPage)
           }
         ]
       },

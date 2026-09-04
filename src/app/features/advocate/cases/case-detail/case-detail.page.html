@@ -85,6 +85,16 @@
         [caseId]="caseId"
         [hasDocuments]="documents.length > 0">
       </app-ai-case-analysis>
+
+      <!-- AI Chat Button -->
+      <div class="mt-4 mb-4" style="padding-bottom: 80px;">
+        <button class="btn btn-primary w-100 d-flex align-center j-center gap-2" (click)="openAiChat()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Chat with AI Assistant
+        </button>
+      </div>
     </div>
 
     <!-- DOCUMENTS TAB -->
