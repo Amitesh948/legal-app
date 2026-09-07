@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-  // apiUrl: 'http://localhost:8000/api/v1',
-  // baseUrl: 'http://localhost:8000',
+  apiUrl: 'http://localhost:8000/api/v1',
+  baseUrl: 'http://localhost:8000',
   apiUrl: 'https://legal.mangoitsol.com/backend/api/v1',
   baseUrl: 'https://legal.mangoitsol.com/backend',
   razorpayKey: 'rzp_test_TMVrmzfeGO86uJ'
