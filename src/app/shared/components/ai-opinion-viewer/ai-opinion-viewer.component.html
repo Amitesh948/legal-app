@@ -229,10 +229,15 @@
         <textarea class="form-textarea" rows="3" placeholder="Additional notes..." [(ngModel)]="editAdvocateNotes"></textarea>
       </div>
 
-      <button class="btn btn-primary w-100" (click)="saveAdvocateFields()" [disabled]="isSaving">
-        <div class="spinner spinner-sm me-2" *ngIf="isSaving"></div>
-        {{ isSaving ? 'Saving...' : 'Save Notes' }}
-      </button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary flex-1" (click)="saveAdvocateFields()" [disabled]="isSaving">
+          <div class="spinner spinner-sm me-2" *ngIf="isSaving"></div>
+          {{ isSaving ? 'Saving...' : 'Save Notes' }}
+        </button>
+        <button class="btn btn-outline-success flex-1" (click)="approveOpinion()" [disabled]="isSaving" title="Approve this opinion and make it visible to the client">
+          Approve & Publish
+        </button>
+      </div>
     </div>
 
   </div>

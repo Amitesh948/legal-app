@@ -13,6 +13,7 @@ import { AiSummaryModalComponent } from '../../../../shared/components/ai-summar
 import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
 import { AiCaseAnalysisComponent } from '../../../../shared/components/ai-case-analysis/ai-case-analysis.component';
 import { AiOpinionViewerComponent } from '../../../../shared/components/ai-opinion-viewer/ai-opinion-viewer.component';
+import { CaseReportsComponent } from '../../../../shared/components/case-reports/case-reports.component';
 
 @Component({
   selector: 'app-advocate-case-detail',
@@ -29,7 +30,8 @@ import { AiOpinionViewerComponent } from '../../../../shared/components/ai-opini
     DocumentListItemComponent,
     ChatRoomComponent,
     AiCaseAnalysisComponent,
-    AiOpinionViewerComponent
+    AiOpinionViewerComponent,
+    CaseReportsComponent
   ],
   templateUrl: './case-detail.page.html',
   styleUrl: './case-detail.page.scss'
@@ -44,7 +46,7 @@ export class AdvocateCaseDetailPage implements OnInit {
   loading = true;
   error = false;
   
-  tabs = ['Overview', 'Documents', 'Messages', 'Opinions'];
+  tabs = ['Overview', 'Documents', 'Messages', 'Opinions', 'Reports'];
   activeTab = 'Overview';
   
   documents: any[] = [];

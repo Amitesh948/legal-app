@@ -43,6 +43,9 @@ export class CaseCardComponent {
       case CaseStatus.ADVOCATE_ASSIGNED:
       case CaseStatus.LEGAL_REVIEW:
       case CaseStatus.UNDER_REVIEW:
+      case CaseStatus.DOCUMENTS_UNDER_REVIEW:
+      case CaseStatus.LEGAL_OPINION_DRAFT:
+      case CaseStatus.LEGAL_OPINION_SUBMITTED:
         return 'badge-brand';
       case CaseStatus.PAYMENT_PENDING:
       case CaseStatus.PENDING_ASSIGNMENT:

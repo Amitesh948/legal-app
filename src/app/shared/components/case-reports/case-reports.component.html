@@ -1,0 +1,83 @@
+<div class="case-reports-container">
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="mb-4">
+    <app-skeleton-loader></app-skeleton-loader>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && error">
+    <app-error-state (retry)="loadData()"></app-error-state>
+  </div>
+
+  <ng-container *ngIf="!loading && !error">
+    
+    <!-- Generation Form -->
+    <div class="card mb-5">
+      <h3 class="fs-lg fw-semibold mb-2">Generate New Report</h3>
+      <p class="fs-sm text-secondary mb-4">Select a template to generate a new report for this case.</p>
+      
+      <div class="d-flex flex-column gap-3">
+        <div class="form-field">
+          <label class="fs-sm fw-medium mb-1">Report Template</label>
+          <select class="form-input w-100" [(ngModel)]="selectedTemplateId" [disabled]="isGenerating">
+            <option *ngFor="let t of templates" [value]="t.id">{{ t.name }} ({{ t.template_type }})</option>
+          </select>
+        </div>
+
+        <div *ngIf="generateError" class="alert alert--danger mt-2">
+          <span>{{ generateError }}</span>
+        </div>
+
+        <button 
+          class="btn btn-primary mt-2" 
+          (click)="generateReport()" 
+          [disabled]="isGenerating || !selectedTemplateId">
+          <div class="spinner spinner-sm me-2" *ngIf="isGenerating"></div>
+          {{ isGenerating ? 'Generating...' : 'Generate Report' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Generated Reports List -->
+    <h3 class="fs-lg fw-semibold mb-3">Generated Reports</h3>
+    
+    <div *ngIf="reports.length === 0" class="card bg-gray-50 text-center p-5 border-0">
+      <p class="m-0 text-secondary">No reports generated yet.</p>
+    </div>
+
+    <div *ngIf="reports.length > 0" class="reports-list d-flex flex-column gap-3">
+      <div class="card p-4 d-flex align-center j-between gap-3" *ngFor="let r of reports">
+        <div class="d-flex align-center gap-3">
+          <div class="icon-circle bg-primary-light text-primary">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h4 class="m-0 fs-base fw-medium">{{ getTemplateName(r.template_id) }}</h4>
+            <div class="d-flex align-center gap-2 mt-1 fs-sm text-secondary">
+              <span>Version {{ r.version }}</span>
+              <span class="meta-dot"></span>
+              <span>{{ r.created_at | date:'medium' }}</span>
+              <span class="meta-dot"></span>
+              <span class="badge" [class.bg-success-light]="r.status === 'COMPLETED'" [class.text-success]="r.status === 'COMPLETED'">{{ r.status }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <button 
+          class="btn btn-outline-primary btn-sm" 
+          *ngIf="r.status === 'COMPLETED'" 
+          (click)="downloadReport(r)">
+          Download PDF
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+</div>

@@ -1,13 +1,73 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>advocate-citations</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Citation Library</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-searchbar 
+      placeholder="Search case law, statutes, or principles..." 
+      animated="true" 
+      [debounce]="0" 
+      (ionInput)="onSearchChange($event)">
+    </ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">advocate-citations</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding bg-gray-50">
+  
+  <!-- Empty / Init State -->
+  <div class="empty-state card text-center mt-4 border-0 bg-transparent" *ngIf="!hasSearched && !loading">
+    <div class="icon-circle mb-3 mx-auto" style="width: 48px; height: 48px; border-radius: 50%; background: var(--ion-color-primary-tint); color: var(--ion-color-primary); display: flex; align-items: center; justify-content: center;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </div>
+    <h4>Search Legal Citations</h4>
+    <p class="text-secondary fs-sm">Enter keywords, case names, or legal principles to search the citation library.</p>
+  </div>
+
+  <!-- Loading State -->
+  <div class="d-flex flex-column align-center j-center h-100" *ngIf="loading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p class="mt-3 text-secondary fs-sm">Searching library...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="card error-state text-center mt-4" *ngIf="error && !loading">
+    <p class="text-danger m-0">An error occurred while searching. Please try again.</p>
+  </div>
+
+  <!-- No Results -->
+  <div class="card empty-state text-center mt-4" *ngIf="hasSearched && !loading && !error && citations.length === 0">
+    <p class="m-0">No citations found matching your query.</p>
+  </div>
+
+  <!-- Results List -->
+  <div class="citation-list mt-3" *ngIf="!loading && !error && citations.length > 0">
+    <div class="citation-card card mb-3 border-0 shadow-sm" *ngFor="let cit of citations">
+      <div class="d-flex align-start j-between mb-2">
+        <h5 class="m-0 text-primary fs-base" style="line-height: 1.4;">{{ cit.title }}</h5>
+        <span class="badge badge-outline badge-sm ms-2" style="white-space: nowrap;">{{ cit.citation_type }}</span>
+      </div>
+      
+      <p class="fs-sm fw-medium text-dark mb-2">{{ cit.reference_number }}</p>
+      
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="badge badge-gray fs-xs">{{ cit.court }}</span>
+        <span class="badge badge-gray fs-xs">{{ cit.jurisdiction }}</span>
+      </div>
+      
+      <p class="fs-sm text-secondary m-0 mb-3" *ngIf="cit.summary || cit.description">{{ cit.summary || cit.description }}</p>
+      
+      <div class="d-flex align-center j-between">
+        <div class="d-flex gap-1 flex-wrap">
+          <span class="badge badge-primary-light fs-xs" *ngFor="let kw of cit.keywords">#{{ kw }}</span>
+        </div>
+        <button *ngIf="cit.url" class="btn btn-sm btn-outline-primary ms-2" (click)="openUrl(cit.url)">
+          View Source
+        </button>
+      </div>
+    </div>
+  </div>
+
 </ion-content>

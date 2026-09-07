@@ -157,5 +157,10 @@
       <app-ai-opinion-viewer *ngIf="caseId" [caseId]="caseId"></app-ai-opinion-viewer>
     </div>
 
+    <!-- REPORTS TAB -->
+    <div *ngIf="activeTab === 'Reports'" class="tab-content">
+      <app-case-reports *ngIf="caseId" [caseId]="caseId"></app-case-reports>
+    </div>
+
   </div>
 </ion-content>

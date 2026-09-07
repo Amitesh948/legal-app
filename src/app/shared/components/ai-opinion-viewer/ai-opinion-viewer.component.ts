@@ -255,7 +255,7 @@ export class AiOpinionViewerComponent implements OnInit, OnDestroy {
       advocate_notes: this.editAdvocateNotes
     };
 
-    this.api.put<LegalOpinionResponse>(`/legal-opinions/${this.opinion.id}`, payload)
+      this.api.put<LegalOpinionResponse>(`/legal-opinions/${this.opinion.id}`, payload)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
@@ -272,6 +272,23 @@ export class AiOpinionViewerComponent implements OnInit, OnDestroy {
           this.isSaving = false;
           this.saveError = err.message || 'Failed to save.';
           this.cdr.detectChanges();
+        }
+      });
+  }
+
+  approveOpinion() {
+    if (!this.opinion) return;
+    if (!window.confirm("Are you sure you want to approve this opinion? It will be immediately visible to the client and cannot be un-approved.")) return;
+    
+    this.api.post<LegalOpinionResponse>(`/legal-opinions/${this.opinion.id}/approve`, {})
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.opinion = res;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          alert('Failed to approve opinion: ' + (err.message || 'Unknown error'));
         }
       });
   }
