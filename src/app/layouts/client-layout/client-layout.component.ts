@@ -30,12 +30,8 @@ export class ClientLayoutComponent implements OnInit, OnDestroy {
       icon: 'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z',
       iconFilled: 'M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z'
     },
-    {
-      label: 'Messages',
-      route: '/client/messages',
-      icon: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
-      iconFilled: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'
-    },
+    // Messages tab hidden — waiting for GET /messages/inbox backend endpoint
+    // Re-add once backend provides a read-only inbox preview API
     {
       label: 'Payments',
       route: '/client/payments',
