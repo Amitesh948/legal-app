@@ -180,15 +180,4 @@
   padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
 }
 
-.alert--danger {
-  background: var(--status-danger-bg);
-  color: var(--status-danger-text);
-  border: 1px solid #FECACA;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-}
+

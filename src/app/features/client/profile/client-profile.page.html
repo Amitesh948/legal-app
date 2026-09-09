@@ -24,7 +24,7 @@
     </div>
 
     <!-- Success Message -->
-    <div *ngIf="saveSuccess" class="alert alert--success mb-6">
+    <div *ngIf="saveSuccess" class="status-message success mb-6 d-flex align-center j-center gap-2">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3"/>
       </svg>
@@ -94,7 +94,7 @@
       <div class="section surface mb-8">
         <h4 class="section__title mb-6">Edit Profile</h4>
         
-        <div *ngIf="saveError" class="alert alert--danger mb-6">
+        <div *ngIf="saveError" class="status-message error mb-6 d-flex align-center j-center gap-2">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="12"></line>

@@ -165,17 +165,17 @@ export class ClientPaymentsPage implements OnInit {
     });
   }
 
-  getStatusColor(status: string): string {
+  getStatusClass(status: string): string {
     switch (status) {
-      case 'SUCCESS': return 'success';
+      case 'SUCCESS': return 'badge-success';
       case 'PENDING':
       case 'CREATED': 
-      case 'PROCESSING': return 'warning';
+      case 'PROCESSING': return 'badge-warning';
       case 'FAILED':
-      case 'CANCELLED': return 'danger';
+      case 'CANCELLED': return 'badge-danger';
       case 'REFUNDED':
-      case 'PARTIALLY_REFUNDED': return 'medium';
-      default: return 'primary';
+      case 'PARTIALLY_REFUNDED': return 'badge-gray';
+      default: return 'badge-brand';
     }
   }
 

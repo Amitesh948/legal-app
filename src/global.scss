@@ -426,6 +426,36 @@ a:hover {
 .badge-brand { background: var(--brand-50); color: var(--brand-700); border: 1px solid var(--brand-50); }
 
 /* ============================================================
+   STATUS MESSAGES (ALERTS)
+   ============================================================ */
+.status-message {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-align: center;
+  
+  &.error, &.danger {
+    background: var(--status-danger-bg);
+    color: var(--status-danger-text);
+    border: 1px solid var(--status-danger-bg);
+  }
+  
+  &.neutral, &.warning {
+    background: var(--status-warning-bg);
+    color: var(--status-warning-text);
+    border: 1px solid var(--status-warning-bg);
+  }
+
+  &.success {
+    background: var(--status-success-bg);
+    color: var(--status-success-text);
+    border: 1px solid var(--status-success-bg);
+  }
+}
+
+/* ============================================================
    LOADING SPINNER
    ============================================================ */
 .spinner {

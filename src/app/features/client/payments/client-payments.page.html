@@ -42,22 +42,21 @@
         <ion-label>
           <div class="payment-header">
             <h2>{{ payment.currency }} {{ payment.amount | number:'1.2-2' }}</h2>
-            <ion-badge [color]="getStatusColor(payment.status)">
+            <span class="badge {{ getStatusClass(payment.status) }}">
               {{ formatStatus(payment.status) }}
-            </ion-badge>
+            </span>
           </div>
           <p class="payment-meta">
             <span>Date: {{ payment.created_at | date:'mediumDate' }}</span>
             <span *ngIf="payment.case?.case_number"> • Case #{{ payment.case?.case_number }}</span>
           </p>
           <div class="payment-actions" *ngIf="payment.status === 'PENDING' || payment.status === 'CREATED'">
-            <ion-button 
-              size="small" 
+            <button class="btn btn-primary btn-sm"
               (click)="payNow(payment)" 
               [disabled]="activePaymentId === payment.id">
-              <ion-spinner *ngIf="activePaymentId === payment.id" name="dots"></ion-spinner>
-              <span *ngIf="activePaymentId !== payment.id">Pay Now</span>
-            </ion-button>
+              <span *ngIf="activePaymentId === payment.id" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ activePaymentId === payment.id ? 'Processing...' : 'Pay Now' }}
+            </button>
           </div>
         </ion-label>
       </ion-item>
