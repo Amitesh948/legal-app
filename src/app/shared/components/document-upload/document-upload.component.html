@@ -1,0 +1,84 @@
+<div class="document-upload-container">
+  
+  <div *ngIf="errorMessage" class="status-message error mb-4 d-flex align-center gap-2">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="8" x2="12" y2="12"></line>
+      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <div *ngIf="!selectedFile"
+       class="dropzone" 
+       [class.drag-over]="isDragging"
+       (dragover)="onDragOver($event)"
+       (dragleave)="onDragLeave($event)"
+       (drop)="onDrop($event)">
+    
+    <input type="file" id="file-upload" class="sr-only-input" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx,.png,.jpg">
+    <label for="file-upload" class="dropzone-content d-flex flex-column align-center j-center gap-3">
+      <div class="upload-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+      </div>
+      <div class="text-center">
+        <p class="m-0 fw-bold fs-md">Click to upload or drag and drop</p>
+        <p class="text-secondary fs-sm m-0 mt-1">PDF, DOCX, PNG, or JPG (Max 10MB)</p>
+      </div>
+    </label>
+  </div>
+
+  <div *ngIf="selectedFile" class="selected-file-card card mb-4">
+    <div class="d-flex align-center gap-3 mb-4">
+      <div class="file-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+          <polyline points="13 2 13 9 20 9"></polyline>
+        </svg>
+      </div>
+      <div class="flex-1 overflow-hidden">
+        <p class="m-0 fw-bold text-truncate">{{ selectedFile.name }}</p>
+        <p class="m-0 fs-sm text-secondary">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
+      </div>
+      <button class="btn btn-ghost btn-icon" (click)="clearSelection()" [disabled]="isUploading" aria-label="Remove file">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="form-field mb-4">
+      <label>Document Category</label>
+      <select class="custom-select" [(ngModel)]="selectedCategory" [disabled]="isUploading">
+        <option value="EVIDENCE">Evidence</option>
+        <option value="PLEADING">Pleading</option>
+        <option value="ORDER">Order</option>
+        <option value="CORRESPONDENCE">Correspondence</option>
+        <option value="IDENTIFICATION">Identification</option>
+        <option value="CONTRACT">Contract</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </div>
+
+    <div *ngIf="isUploading" class="upload-progress mb-4">
+      <div class="d-flex justify-between fs-sm fw-medium mb-2">
+        <span>Uploading...</span>
+        <span>{{ uploadProgress }}%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width.%]="uploadProgress"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-block" (click)="uploadFile()" [disabled]="isUploading">
+      <span *ngIf="!isUploading">Upload Document</span>
+      <div *ngIf="isUploading" class="spinner spinner-sm"></div>
+    </button>
+  </div>
+
+</div>

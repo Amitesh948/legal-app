@@ -11,6 +11,7 @@ import { TimelineComponent } from '../../../../shared/components/timeline/timeli
 import { DocumentListItemComponent } from '../../../../shared/components/document-list-item/document-list-item.component';
 import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
 import { AiOpinionViewerComponent } from '../../../../shared/components/ai-opinion-viewer/ai-opinion-viewer.component';
+import { DocumentUploadComponent } from '../../../../shared/components/document-upload/document-upload.component';
 import { RazorpayService } from '../../../../core/services/razorpay.service';
 import { CaseStatus, CASE_STATUS_LABELS } from '../../../../shared/constants/case-status.constants';
 
@@ -28,7 +29,8 @@ import { CaseStatus, CASE_STATUS_LABELS } from '../../../../shared/constants/cas
     TimelineComponent,
     DocumentListItemComponent,
     ChatRoomComponent,
-    AiOpinionViewerComponent
+    AiOpinionViewerComponent,
+    DocumentUploadComponent
   ],
   templateUrl: './case-detail.page.html',
   styleUrl: './case-detail.page.scss'
@@ -248,87 +250,17 @@ export class ClientCaseDetailPage implements OnInit {
     }
   }
 
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Client-side validation
-    const maxMb = 10;
-    if (file.size > maxMb * 1024 * 1024) {
-      alert(`File is too large. Max size is ${maxMb}MB.`);
-      this.resetFileInput();
-      return;
+  onUploadComplete(doc: any) {
+    if (!this.documents) {
+      this.documents = [];
     }
-    const allowed = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    if (!allowed.includes(file.type)) {
-      alert('Unsupported file type. Please upload a PDF, Image, or Word document.');
-      this.resetFileInput();
-      return;
-    }
-
-    this.startUpload(file);
-    this.resetFileInput();
-  }
-
-  private resetFileInput() {
-    if (this.fileInput) {
-      this.fileInput.nativeElement.value = '';
-    }
-  }
-
-  private startUpload(file: File) {
-    const optimisticId = 'temp-' + Date.now();
-    const optimisticDoc = {
-      id: optimisticId,
-      original_filename: file.name,
-      file_size: file.size,
-      extension: file.name.split('.').pop() || '',
-      created_at: new Date().toISOString(),
-      isUploading: true,
-      progress: 0,
-      error: false,
-      rawFile: file // Keep for retry
-    };
-    
-    this.documents.unshift(optimisticDoc);
-    this.performUpload(optimisticDoc);
-  }
-
-  private performUpload(doc: any) {
-    doc.isUploading = true;
-    doc.error = false;
-    doc.progress = 0;
-    
-    const formData = new FormData();
-    formData.append('file', doc.rawFile);
-    formData.append('case_id', this.caseId!);
-    formData.append('category', 'OTHER');
-
-    this.api.upload('/documents/upload', formData).subscribe({
-      next: (event: any) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          doc.progress = Math.round(100 * event.loaded / (event.total || event.loaded));
-          this.cdr.detectChanges();
-        } else if (event.type === HttpEventType.Response) {
-          // Success
-          Object.assign(doc, event.body);
-          doc.isUploading = false;
-          doc.error = false;
-          this.cdr.detectChanges();
-        }
-      },
-      error: () => {
-        doc.isUploading = false;
-        doc.error = true;
-        this.cdr.detectChanges();
-      }
-    });
+    this.documents.unshift(doc);
+    // Refresh list to ensure we have all fields from server
+    this.loadDocuments();
   }
 
   onDocumentTap(doc: any) {
-    if (doc.error) {
-      this.performUpload(doc);
-    } else if (!doc.isUploading) {
+    if (!doc.isUploading) {
       console.log('Downloading document:', doc);
       this.api.getBlob(`/documents/download/${doc.id}`).subscribe({
         next: (blob) => {

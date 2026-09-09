@@ -4,6 +4,7 @@ import { IonContent, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, Ion
 import { ApiService } from '../../../core/services/api.service';
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component';
 import { ErrorStateComponent } from '../error-state/error-state.component';
+import { AiSummaryViewerComponent } from '../ai-summary-viewer/ai-summary-viewer.component';
 
 @Component({
   selector: 'app-ai-summary-modal',
@@ -18,7 +19,8 @@ import { ErrorStateComponent } from '../error-state/error-state.component';
     IonButton, 
     IonIcon,
     SkeletonLoaderComponent,
-    ErrorStateComponent
+    ErrorStateComponent,
+    AiSummaryViewerComponent
   ],
   templateUrl: './ai-summary-modal.component.html',
   styleUrl: './ai-summary-modal.component.scss'

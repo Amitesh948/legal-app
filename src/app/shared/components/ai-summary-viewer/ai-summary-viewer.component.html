@@ -1,0 +1,138 @@
+<div *ngIf="summary" class="ai-summary-container">
+  
+  <div class="summary-header mb-6">
+    <div class="d-flex align-center justify-between mb-2">
+      <h3 class="m-0 fs-xl fw-bold d-flex align-center gap-2">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-500)" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+        AI Analysis Report
+      </h3>
+      <span class="badge badge-brand">Gemini AI</span>
+    </div>
+    <p class="m-0 text-secondary fs-sm">Generated for Document ID: <span class="fw-medium text-primary">{{ summary.document_id | slice:0:8 }}...</span></p>
+  </div>
+
+  <!-- Overall Summary -->
+  <div class="section surface mb-6">
+    <h4 class="section-title mb-3">Overall Summary</h4>
+    <p class="m-0 fs-base line-height-relaxed" *ngIf="hasValidString(summary.overall_summary); else notSpecified">
+      {{ summary.overall_summary }}
+    </p>
+  </div>
+
+  <!-- Risk Assessment -->
+  <div class="section surface mb-6" *ngIf="summary.risk_assessment">
+    <h4 class="section-title mb-3">Risk Assessment</h4>
+    <div class="risk-card d-flex gap-4 p-4 mb-2" 
+         [ngClass]="{'risk-high': summary.risk_assessment.level === 'HIGH', 
+                     'risk-medium': summary.risk_assessment.level === 'MEDIUM',
+                     'risk-low': summary.risk_assessment.level === 'LOW'}">
+      <div class="risk-badge" [ngClass]="'bg-' + (summary.risk_assessment.level | lowercase)">
+        {{ summary.risk_assessment.level || 'UNKNOWN' }}
+      </div>
+      <p class="m-0 fs-sm flex-1">{{ summary.risk_assessment.reason || 'No specific reasoning provided.' }}</p>
+    </div>
+  </div>
+
+  <!-- Case Details -->
+  <div class="section surface mb-6" *ngIf="summary.case_details">
+    <h4 class="section-title mb-3">Case Details</h4>
+    <div class="details-grid">
+      <div class="detail-item">
+        <span class="detail-label">Court</span>
+        <span class="detail-value" *ngIf="hasValidString(summary.case_details.court); else notSpecifiedInline">{{ summary.case_details.court }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Case Number</span>
+        <span class="detail-value" *ngIf="hasValidString(summary.case_details.case_number); else notSpecifiedInline">{{ summary.case_details.case_number }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Case Type</span>
+        <span class="detail-value" *ngIf="hasValidString(summary.case_details.case_type); else notSpecifiedInline">{{ summary.case_details.case_type }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Plaintiff</span>
+        <span class="detail-value" *ngIf="hasValidString(summary.case_details.plaintiff); else notSpecifiedInline">{{ summary.case_details.plaintiff }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Defendant</span>
+        <span class="detail-value" *ngIf="hasValidString(summary.case_details.defendant); else notSpecifiedInline">{{ summary.case_details.defendant }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Background -->
+  <div class="section surface mb-6">
+    <h4 class="section-title mb-3">Background</h4>
+    <p class="m-0 fs-base line-height-relaxed" *ngIf="hasValidString(summary.background); else notSpecified">
+      {{ summary.background }}
+    </p>
+  </div>
+
+  <!-- Arrays section -->
+  <div class="row">
+    <div class="col-md-6 mb-6" *ngIf="hasValidArray(summary.plaintiff_claims)">
+      <div class="section surface h-100">
+        <h4 class="section-title mb-3">Plaintiff Claims</h4>
+        <ul class="styled-list m-0 pl-0">
+          <li *ngFor="let claim of summary.plaintiff_claims" class="mb-2 fs-sm">{{ claim }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-6" *ngIf="hasValidArray(summary.defendant_position)">
+      <div class="section surface h-100">
+        <h4 class="section-title mb-3">Defendant Position</h4>
+        <ul class="styled-list m-0 pl-0">
+          <li *ngFor="let position of summary.defendant_position" class="mb-2 fs-sm">{{ position }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section surface mb-6" *ngIf="hasValidArray(summary.important_facts)">
+    <h4 class="section-title mb-3">Important Facts</h4>
+    <ul class="styled-list m-0 pl-0">
+      <li *ngFor="let fact of summary.important_facts" class="mb-2 fs-sm">{{ fact }}</li>
+    </ul>
+  </div>
+
+  <div class="section surface mb-6" *ngIf="hasValidArray(summary.legal_issues)">
+    <h4 class="section-title mb-3">Legal Issues</h4>
+    <ul class="styled-list m-0 pl-0">
+      <li *ngFor="let issue of summary.legal_issues" class="mb-2 fs-sm">{{ issue }}</li>
+    </ul>
+  </div>
+
+  <div class="section surface mb-6" *ngIf="hasValidArray(summary.reliefs_sought)">
+    <h4 class="section-title mb-3">Reliefs Sought</h4>
+    <ul class="styled-list m-0 pl-0">
+      <li *ngFor="let relief of summary.reliefs_sought" class="mb-2 fs-sm">{{ relief }}</li>
+    </ul>
+  </div>
+
+  <!-- Timeline -->
+  <div class="section surface mb-6" *ngIf="hasValidArray(summary.timeline)">
+    <h4 class="section-title mb-4">Timeline of Events</h4>
+    <div class="timeline-container pl-3">
+      <div class="timeline-item position-relative mb-4 pb-2" *ngFor="let event of summary.timeline">
+        <div class="timeline-marker position-absolute"></div>
+        <div class="timeline-content pl-4">
+          <span class="timeline-date d-block fw-bold fs-sm text-primary mb-1">{{ event.date }}</span>
+          <span class="timeline-event fs-base text-secondary">{{ event.event }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Templates -->
+<ng-template #notSpecified>
+  <p class="m-0 fs-base text-muted fst-italic">Not specified</p>
+</ng-template>
+
+<ng-template #notSpecifiedInline>
+  <span class="text-muted fst-italic">Not specified</span>
+</ng-template>
