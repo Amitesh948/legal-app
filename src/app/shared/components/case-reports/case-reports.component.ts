@@ -92,7 +92,7 @@ export class CaseReportsComponent implements OnInit {
       },
       error: (err) => {
         this.isGenerating = false;
-        this.generateError = err?.error?.detail || 'Failed to generate report. Please try again.';
+        this.generateError = err?.message || 'Failed to generate report. Please try again.';
         this.cdr.detectChanges();
       }
     });
