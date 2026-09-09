@@ -12,6 +12,7 @@ import { DocumentListItemComponent } from '../../../../shared/components/documen
 import { ChatRoomComponent } from '../../../../shared/components/chat-room/chat-room.component';
 import { AiOpinionViewerComponent } from '../../../../shared/components/ai-opinion-viewer/ai-opinion-viewer.component';
 import { RazorpayService } from '../../../../core/services/razorpay.service';
+import { CaseStatus, CASE_STATUS_LABELS } from '../../../../shared/constants/case-status.constants';
 
 @Component({
   selector: 'app-client-case-detail',
@@ -347,13 +348,46 @@ export class ClientCaseDetailPage implements OnInit {
     }
   }
 
+  get statusLabel(): string {
+    if (!this.caseData?.case?.status) return '';
+    const status = this.caseData.case.status;
+    const normalized = status.includes('.') ? status.split('.').pop()! : status;
+    return CASE_STATUS_LABELS[normalized] || normalized;
+  }
+
   get statusClass(): string {
-    const s = this.caseData?.case?.status?.toLowerCase() || '';
-    if (s === 'open' || s === 'active' || s.includes('new')) return 'badge-info';
-    if (s === 'pending' || s.includes('review')) return 'badge-warning';
-    if (s === 'closed' || s === 'completed') return 'badge-success';
-    if (s === 'urgent' || s === 'overdue') return 'badge-danger';
-    return 'badge-gray';
+    const status = this.caseData?.case?.status;
+    if (!status) return 'badge-gray';
+    const normalized = status.includes('.') ? status.split('.').pop()! : status;
+    
+    switch (normalized as CaseStatus) {
+      case CaseStatus.NEW:
+      case CaseStatus.AI_PROCESSING:
+      case CaseStatus.DOCUMENTS_UPLOADED:
+        return 'badge-info';
+      case CaseStatus.IN_PROGRESS:
+      case CaseStatus.ADVOCATE_ASSIGNED:
+      case CaseStatus.LEGAL_REVIEW:
+      case CaseStatus.UNDER_REVIEW:
+      case CaseStatus.DOCUMENTS_UNDER_REVIEW:
+      case CaseStatus.LEGAL_OPINION_DRAFT:
+      case CaseStatus.LEGAL_OPINION_SUBMITTED:
+        return 'badge-brand';
+      case CaseStatus.PAYMENT_PENDING:
+      case CaseStatus.PENDING_ASSIGNMENT:
+      case CaseStatus.INFORMATION_REQUIRED:
+        return 'badge-warning';
+      case CaseStatus.COMPLETED:
+      case CaseStatus.PAYMENT_COMPLETED:
+      case CaseStatus.REPORT_GENERATED:
+      case CaseStatus.OPINION_GENERATED:
+        return 'badge-success';
+      case CaseStatus.CANCELLED:
+      case CaseStatus.CLOSED:
+        return 'badge-danger';
+      default:
+        return 'badge-gray';
+    }
   }
 
   goBack() {

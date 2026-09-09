@@ -10,6 +10,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { ErrorStateComponent } from '../../../shared/components/error-state/error-state.component';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar.component';
+import { CaseStatus, CASE_STATUS_LABELS } from '../../../shared/constants/case-status.constants';
 
 @Component({
   selector: 'app-advocate-dashboard',
@@ -71,19 +72,47 @@ export class AdvocateDashboardPage implements OnInit {
     return 'Good evening';
   }
 
+  getStatusLabel(status: string): string {
+    if (!status) return '';
+    const normalized = status.includes('.') ? status.split('.').pop()! : status;
+    return CASE_STATUS_LABELS[normalized] || normalized;
+  }
+
   getStatusClass(status: string): string {
-    const s = status?.toLowerCase();
-    if (s === 'completed' || s === 'resolved') return 'badge-success';
-    if (s === 'pending' || s === 'draft') return 'badge-warning';
-    if (s === 'rejected' || s === 'closed') return 'badge-gray';
-    return 'badge-info';
+    if (!status) return 'badge-gray';
+    const normalized = status.includes('.') ? status.split('.').pop()! : status;
+    
+    switch (normalized as CaseStatus) {
+      case CaseStatus.NEW:
+      case CaseStatus.AI_PROCESSING:
+      case CaseStatus.DOCUMENTS_UPLOADED:
+        return 'badge-info';
+      case CaseStatus.IN_PROGRESS:
+      case CaseStatus.ADVOCATE_ASSIGNED:
+      case CaseStatus.LEGAL_REVIEW:
+      case CaseStatus.UNDER_REVIEW:
+      case CaseStatus.DOCUMENTS_UNDER_REVIEW:
+      case CaseStatus.LEGAL_OPINION_DRAFT:
+      case CaseStatus.LEGAL_OPINION_SUBMITTED:
+        return 'badge-brand';
+      case CaseStatus.PAYMENT_PENDING:
+      case CaseStatus.PENDING_ASSIGNMENT:
+      case CaseStatus.INFORMATION_REQUIRED:
+        return 'badge-warning';
+      case CaseStatus.COMPLETED:
+      case CaseStatus.PAYMENT_COMPLETED:
+      case CaseStatus.REPORT_GENERATED:
+      case CaseStatus.OPINION_GENERATED:
+        return 'badge-success';
+      case CaseStatus.CANCELLED:
+      case CaseStatus.CLOSED:
+        return 'badge-danger';
+      default:
+        return 'badge-gray';
+    }
   }
 
   getDotClass(status: string): string {
-    const s = status?.toLowerCase();
-    if (s === 'completed' || s === 'resolved') return 'dot-success';
-    if (s === 'pending' || s === 'draft') return 'dot-warning';
-    if (s === 'rejected' || s === 'closed') return 'dot-gray';
-    return 'dot-info';
+    return this.getStatusClass(status).replace('badge-', 'dot-');
   }
 }
