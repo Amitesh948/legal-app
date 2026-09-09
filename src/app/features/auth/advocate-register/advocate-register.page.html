@@ -1,0 +1,508 @@
+<div class="auth-card" *ngIf="!isSubmitted">
+  <!-- Branding -->
+  <div class="auth-card__header">
+    <a routerLink="/" class="auth-logo" aria-label="Go to homepage">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <rect width="44" height="44" rx="10" fill="var(--color-primary)"/>
+        <path d="M12 12h6v20h-6V12zm14 6h6v14h-6V18z" fill="white"/>
+      </svg>
+    </a>
+
+    <h1 *ngIf="currentStep === 'email-request'">Apply as Advocate</h1>
+    <h1 *ngIf="currentStep === 'email-verify'">Enter OTP</h1>
+    <h1 *ngIf="currentStep === 'personal'">Personal Information</h1>
+    <h1 *ngIf="currentStep === 'professional'">Professional Details</h1>
+    <h1 *ngIf="currentStep === 'lawfirm'">Law Firm Details</h1>
+    <h1 *ngIf="currentStep === 'documents'">Upload Documents</h1>
+    <h1 *ngIf="currentStep === 'security'">Set Password</h1>
+    <h1 *ngIf="currentStep === 'terms'">Terms &amp; Conditions</h1>
+
+    <p *ngIf="currentStep === 'email-request'">Start by verifying your email address</p>
+    <p *ngIf="currentStep === 'email-verify'">Enter the code sent to {{ email }}</p>
+    <p *ngIf="currentStep === 'personal'">Tell us about yourself</p>
+    <p *ngIf="currentStep === 'professional'">Your legal practice information</p>
+    <p *ngIf="currentStep === 'lawfirm'">Your law firm information</p>
+    <p *ngIf="currentStep === 'documents'">Upload required verification documents</p>
+    <p *ngIf="currentStep === 'security'">Create a secure password for your account</p>
+    <p *ngIf="currentStep === 'terms'">Review and accept to complete your application</p>
+  </div>
+
+  <!-- Step Indicator -->
+  <div class="step-indicator" *ngIf="currentStep !== 'email-request'">
+    <div class="step-meta">
+      <span class="step-label">{{ stepLabel }}</span>
+    </div>
+    <div class="step-indicator__bar">
+      <div class="step-indicator__progress" [style.width.%]="progressPercent"></div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  <div class="auth-error" *ngIf="errorMessage">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/>
+      <line x1="15" y1="9" x2="9" y2="15"/>
+      <line x1="9" y1="9" x2="15" y2="15"/>
+    </svg>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <!-- Success Message -->
+  <div class="auth-success" *ngIf="successMessage">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    <span>{{ successMessage }}</span>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Email Request
+       ════════════════════════════════════════════════════════════ -->
+  <form *ngIf="currentStep === 'email-request'" (ngSubmit)="requestOtp()" novalidate>
+    <div class="form-field">
+      <label for="adv-email">Email address</label>
+      <ion-input
+        id="adv-email"
+        type="email"
+        placeholder="Enter your email"
+        [(ngModel)]="email"
+        name="email"
+        autocomplete="email"
+        inputmode="email"
+        [disabled]="loading"
+      ></ion-input>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="loading">
+      <span class="spinner spinner-sm" *ngIf="loading"></span>
+      <span *ngIf="!loading">Send Verification Code</span>
+      <span *ngIf="loading">Sending...</span>
+    </button>
+  </form>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Email Verify
+       ════════════════════════════════════════════════════════════ -->
+  <form *ngIf="currentStep === 'email-verify'" (ngSubmit)="verifyOtp()" novalidate>
+    <div class="form-field">
+      <label for="adv-otp">Verification Code</label>
+      <ion-input
+        id="adv-otp"
+        type="text"
+        placeholder="Enter 6-digit code"
+        [(ngModel)]="otpCode"
+        name="otpCode"
+        inputmode="numeric"
+        [disabled]="loading"
+      ></ion-input>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg btn-block" [disabled]="loading">
+      <span class="spinner spinner-sm" *ngIf="loading"></span>
+      <span *ngIf="!loading">Verify Code</span>
+      <span *ngIf="loading">Verifying...</span>
+    </button>
+
+    <button type="button" class="btn btn-ghost btn-block mt-3" (click)="goBack()">Back</button>
+  </form>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Personal Info
+       ════════════════════════════════════════════════════════════ -->
+  <div *ngIf="currentStep === 'personal'">
+    <div class="form-row">
+      <div class="form-field">
+        <label for="adv-first-name">First name *</label>
+        <ion-input id="adv-first-name" type="text" placeholder="First name"
+          [(ngModel)]="firstName" name="firstName" [disabled]="loading"></ion-input>
+      </div>
+      <div class="form-field">
+        <label for="adv-last-name">Last name *</label>
+        <ion-input id="adv-last-name" type="text" placeholder="Last name"
+          [(ngModel)]="lastName" name="lastName" [disabled]="loading"></ion-input>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="adv-phone">Phone number *</label>
+      <ion-input id="adv-phone" type="tel" placeholder="Phone number"
+        [(ngModel)]="phone" name="phone" inputmode="tel" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="form-field">
+      <label for="adv-address">Address *</label>
+      <ion-input id="adv-address" type="text" placeholder="Street address"
+        [(ngModel)]="addressLine1" name="addressLine1" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="adv-city">City</label>
+        <ion-input id="adv-city" type="text" placeholder="City"
+          [(ngModel)]="city" name="city" [disabled]="loading"></ion-input>
+      </div>
+      <div class="form-field">
+        <label for="adv-state">State</label>
+        <ion-input id="adv-state" type="text" placeholder="State"
+          [(ngModel)]="state" name="state" [disabled]="loading"></ion-input>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="adv-country">Country</label>
+        <ion-input id="adv-country" type="text" placeholder="Country"
+          [(ngModel)]="country" name="country" [disabled]="loading"></ion-input>
+      </div>
+      <div class="form-field">
+        <label for="adv-postal">Postal code</label>
+        <ion-input id="adv-postal" type="text" placeholder="Postal code"
+          [(ngModel)]="postalCode" name="postalCode" [disabled]="loading"></ion-input>
+      </div>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn btn-ghost" (click)="goBack()">Back</button>
+      <button type="button" class="btn btn-primary" (click)="goNext()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Professional Info
+       ════════════════════════════════════════════════════════════ -->
+  <div *ngIf="currentStep === 'professional'">
+    <div class="form-row">
+      <div class="form-field">
+        <label for="adv-bar-number">Bar Council Number *</label>
+        <ion-input id="adv-bar-number" type="text" placeholder="e.g. MH/1234/2020"
+          [(ngModel)]="barCouncilNumber" name="barCouncilNumber" [disabled]="loading"></ion-input>
+      </div>
+      <div class="form-field">
+        <label for="adv-bar-name">Bar Council Name *</label>
+        <ion-input id="adv-bar-name" type="text" placeholder="e.g. Bar Council of Maharashtra"
+          [(ngModel)]="barCouncilName" name="barCouncilName" [disabled]="loading"></ion-input>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="adv-enroll-date">Enrollment Date *</label>
+        <ion-input id="adv-enroll-date" type="date"
+          [(ngModel)]="enrollmentDate" name="enrollmentDate" [disabled]="loading"></ion-input>
+      </div>
+      <div class="form-field">
+        <label for="adv-experience">Years of Experience *</label>
+        <ion-input id="adv-experience" type="number" placeholder="0"
+          [(ngModel)]="yearsOfExperience" name="yearsOfExperience" [disabled]="loading"
+          min="0"></ion-input>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Practice Type *</label>
+      <div class="radio-group">
+        <label class="radio-option" *ngFor="let pt of practiceTypes"
+          [class.selected]="practiceType === pt">
+          <input type="radio" name="practiceType" [value]="pt"
+            [(ngModel)]="practiceType" [disabled]="loading" />
+          <span>{{ pt }}</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Primary Practice Areas * <span class="text-secondary fs-xs">(select at least one)</span></label>
+      <div class="chip-group">
+        <button type="button" class="chip"
+          *ngFor="let area of practiceAreas"
+          [class.selected]="isPracticeAreaSelected(area)"
+          (click)="togglePracticeArea(area)">
+          {{ area }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="adv-summary">Professional Summary</label>
+      <ion-textarea id="adv-summary" placeholder="Brief description of your practice and expertise..."
+        [(ngModel)]="professionalSummary" name="professionalSummary"
+        [disabled]="loading" rows="3" autoGrow="true"></ion-textarea>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn btn-ghost" (click)="goBack()">Back</button>
+      <button type="button" class="btn btn-primary" (click)="goNext()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Law Firm (conditional — only shown if practice_type is "Law Firm")
+       ════════════════════════════════════════════════════════════ -->
+  <div *ngIf="currentStep === 'lawfirm'">
+    <div class="form-field">
+      <label for="adv-firm-name">Law Firm Name *</label>
+      <ion-input id="adv-firm-name" type="text" placeholder="Name of your law firm"
+        [(ngModel)]="lawFirmName" name="lawFirmName" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="form-field">
+      <label for="adv-designation">Designation</label>
+      <ion-input id="adv-designation" type="text" placeholder="e.g. Senior Partner"
+        [(ngModel)]="designation" name="designation" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="form-field">
+      <label for="adv-office-addr">Office Address</label>
+      <ion-input id="adv-office-addr" type="text" placeholder="Office address"
+        [(ngModel)]="officeAddress" name="officeAddress" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="adv-office-phone">Office Phone</label>
+        <ion-input id="adv-office-phone" type="tel" placeholder="Office phone"
+          [(ngModel)]="officePhone" name="officePhone" [disabled]="loading"></ion-input>
+      </div>
+      <div class="form-field">
+        <label for="adv-website">Website</label>
+        <ion-input id="adv-website" type="url" placeholder="https://..."
+          [(ngModel)]="website" name="website" [disabled]="loading"></ion-input>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="adv-linkedin">LinkedIn URL</label>
+      <ion-input id="adv-linkedin" type="url" placeholder="https://linkedin.com/in/..."
+        [(ngModel)]="linkedinUrl" name="linkedinUrl" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn btn-ghost" (click)="goBack()">Back</button>
+      <button type="button" class="btn btn-primary" (click)="goNext()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Documents
+       ════════════════════════════════════════════════════════════ -->
+  <div *ngIf="currentStep === 'documents'">
+    <!-- Bar Certificate (required) -->
+    <div class="form-field">
+      <label>Bar Council Certificate * <span class="text-secondary fs-xs">(PDF, JPG, PNG)</span></label>
+      <div class="file-upload-zone" (click)="barCertInput.click()">
+        <input #barCertInput type="file" accept=".pdf,.jpg,.jpeg,.png"
+          (change)="onFileSelected($event, 'barCertificate')" hidden />
+        <div class="file-upload-content" *ngIf="!barCertificateName">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Tap to select file</span>
+        </div>
+        <div class="file-upload-selected" *ngIf="barCertificateName">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>{{ barCertificateName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo ID (required) -->
+    <div class="form-field">
+      <label>Government Photo ID * <span class="text-secondary fs-xs">(Aadhaar, PAN, Passport)</span></label>
+      <div class="file-upload-zone" (click)="photoIdInput.click()">
+        <input #photoIdInput type="file" accept=".pdf,.jpg,.jpeg,.png"
+          (change)="onFileSelected($event, 'photoId')" hidden />
+        <div class="file-upload-content" *ngIf="!photoIdName">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Tap to select file</span>
+        </div>
+        <div class="file-upload-selected" *ngIf="photoIdName">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>{{ photoIdName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Photo (required) -->
+    <div class="form-field">
+      <label>Profile Photo * <span class="text-secondary fs-xs">(JPG, PNG)</span></label>
+      <div class="file-upload-zone" (click)="photoInput.click()">
+        <input #photoInput type="file" accept=".jpg,.jpeg,.png"
+          (change)="onFileSelected($event, 'photo')" hidden />
+        <div class="file-upload-content" *ngIf="!photoName">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Tap to select file</span>
+        </div>
+        <div class="file-upload-selected" *ngIf="photoName">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>{{ photoName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resume (optional) -->
+    <div class="form-field">
+      <label>Resume / CV <span class="text-secondary fs-xs">(optional)</span></label>
+      <div class="file-upload-zone" (click)="resumeInput.click()">
+        <input #resumeInput type="file" accept=".pdf,.doc,.docx"
+          (change)="onFileSelected($event, 'resume')" hidden />
+        <div class="file-upload-content" *ngIf="!resumeName">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Tap to select file</span>
+        </div>
+        <div class="file-upload-selected" *ngIf="resumeName">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>{{ resumeName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Degree (optional) -->
+    <div class="form-field">
+      <label>Law Degree Certificate <span class="text-secondary fs-xs">(optional)</span></label>
+      <div class="file-upload-zone" (click)="degreeInput.click()">
+        <input #degreeInput type="file" accept=".pdf,.jpg,.jpeg,.png"
+          (change)="onFileSelected($event, 'degree')" hidden />
+        <div class="file-upload-content" *ngIf="!degreeName">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <span>Tap to select file</span>
+        </div>
+        <div class="file-upload-selected" *ngIf="degreeName">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <span>{{ degreeName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn btn-ghost" (click)="goBack()">Back</button>
+      <button type="button" class="btn btn-primary" (click)="goNext()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Security (Password)
+       ════════════════════════════════════════════════════════════ -->
+  <div *ngIf="currentStep === 'security'">
+    <div class="form-field">
+      <label for="adv-password">Password *</label>
+      <ion-input id="adv-password" [type]="showPassword ? 'text' : 'password'"
+        placeholder="Minimum 8 characters"
+        [(ngModel)]="password" name="password" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="form-field">
+      <label for="adv-confirm-pass">Confirm Password *</label>
+      <ion-input id="adv-confirm-pass" [type]="showPassword ? 'text' : 'password'"
+        placeholder="Re-enter your password"
+        [(ngModel)]="confirmPassword" name="confirmPassword" [disabled]="loading"></ion-input>
+    </div>
+
+    <div class="show-password-toggle mb-5">
+      <label class="d-flex align-center gap-2">
+        <input type="checkbox" [checked]="showPassword" (change)="togglePassword()" />
+        <span class="fs-sm text-secondary">Show password</span>
+      </label>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn btn-ghost" (click)="goBack()">Back</button>
+      <button type="button" class="btn btn-primary" (click)="goNext()">Continue</button>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════
+       STEP: Terms & Conditions
+       ════════════════════════════════════════════════════════════ -->
+  <div *ngIf="currentStep === 'terms'">
+    <div class="terms-box">
+      <p>By submitting this application, you confirm that:</p>
+      <ul>
+        <li>All information provided is accurate and truthful.</li>
+        <li>You hold a valid license to practice law in your jurisdiction.</li>
+        <li>You agree to the Legal AI platform's Terms of Service and Privacy Policy.</li>
+        <li>Your application will be reviewed by our admin team before activation.</li>
+      </ul>
+    </div>
+
+    <div class="terms-checkbox mb-5">
+      <label class="d-flex align-center gap-2">
+        <input type="checkbox" [(ngModel)]="agreeTerms" name="agreeTerms" />
+        <span class="fs-sm">I agree to the Terms of Service and Privacy Policy</span>
+      </label>
+    </div>
+
+    <div class="step-buttons">
+      <button type="button" class="btn btn-ghost" (click)="goBack()">Back</button>
+      <button type="button" class="btn btn-primary" [disabled]="loading || !agreeTerms"
+        (click)="submitApplication()">
+        <span class="spinner spinner-sm" *ngIf="loading"></span>
+        <span *ngIf="!loading">Submit Application</span>
+        <span *ngIf="loading">Submitting...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="auth-card__footer">
+    <p>Already have an account? <a routerLink="/auth/login">Sign in</a></p>
+    <p class="mt-2">Registering as a client? <a routerLink="/auth/register">Register here</a></p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     SUCCESS STATE — Application Submitted
+     ════════════════════════════════════════════════════════════ -->
+<div class="auth-card success-card" *ngIf="isSubmitted">
+  <div class="success-icon">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+      <polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+  </div>
+  <h2>Application Submitted!</h2>
+  <p class="success-description">
+    Thank you for applying to join Legal AI as an advocate. Your application and verification
+    documents are now <strong>under review</strong> by our administrative team.
+  </p>
+  <p class="success-note">
+    You will receive an email notification once your account has been approved.
+    This typically takes 1–2 business days.
+  </p>
+  <button class="btn btn-primary btn-lg btn-block mt-6" (click)="navigateToLogin()">
+    Back to Login
+  </button>
+</div>

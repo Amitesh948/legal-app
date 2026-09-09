@@ -1,0 +1,358 @@
+/* ============================================================
+   Advocate Register Page
+   Extends the shared auth card pattern from login + register
+   ============================================================ */
+
+.auth-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8) var(--space-6);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-card__header {
+  text-align: center;
+  margin-bottom: var(--space-6);
+}
+
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--space-5);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.auth-card__header h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.auth-card__header p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+/* ── Step Indicator ── */
+.step-indicator {
+  margin-bottom: var(--space-6);
+}
+
+.step-meta {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-2);
+}
+
+.step-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.step-indicator__bar {
+  height: 4px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.step-indicator__progress {
+  height: 100%;
+  background: var(--color-secondary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-base);
+}
+
+/* ── Error / Success Banners ── */
+.auth-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-danger-bg);
+  border: 1px solid #FECACA;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  animation: slideIn 0.2s ease;
+}
+
+.auth-success {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-success-bg);
+  border: 1px solid #BBF7D0;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-error svg,
+.auth-success svg {
+  flex-shrink: 0;
+}
+
+/* ── Form Row (side by side) ── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 380px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+/* ── Step Buttons ── */
+.step-buttons {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.step-buttons .btn {
+  flex: 1;
+}
+
+/* ── Radio Group (Practice Type) ── */
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.radio-option:hover {
+  border-color: var(--color-secondary-light);
+}
+
+.radio-option.selected {
+  border-color: var(--color-secondary);
+  background: var(--color-secondary-bg);
+  color: var(--color-secondary);
+}
+
+.radio-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-secondary);
+}
+
+/* ── Chip Group (Practice Areas) ── */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-height: 200px;
+  overflow-y: auto;
+  padding: var(--space-2) 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-family);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--color-secondary-light);
+}
+
+.chip.selected {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: white;
+}
+
+/* ── File Upload Zones ── */
+.file-upload-zone {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.file-upload-zone:hover {
+  border-color: var(--color-secondary-light);
+  background: var(--color-background);
+}
+
+.file-upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.file-upload-selected {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.file-upload-selected span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Terms Box ── */
+.terms-box {
+  background: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+.terms-box p {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-3);
+}
+
+.terms-box ul {
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
+.terms-box li {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  line-height: 1.5;
+}
+
+.terms-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-secondary);
+}
+
+/* ── Show Password ── */
+.show-password-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-secondary);
+}
+
+/* ── Success Card ── */
+.success-card {
+  text-align: center;
+  animation: fadeInUp 0.4s ease;
+}
+
+.success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: var(--color-success-bg);
+  border-radius: var(--radius-full);
+  margin: 0 auto var(--space-6);
+  color: var(--color-success);
+}
+
+.success-card h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.success-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-3);
+}
+
+.success-note {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Footer ── */
+.auth-card__footer {
+  text-align: center;
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-divider);
+}
+
+.auth-card__footer p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.auth-card__footer a {
+  color: var(--color-secondary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ── Mobile adjustments ── */
+@media (max-width: 480px) {
+  .auth-card {
+    box-shadow: none;
+    border-radius: 0;
+    padding: var(--space-6) var(--space-5);
+    background: var(--color-background);
+  }
+}

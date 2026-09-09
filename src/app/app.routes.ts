@@ -24,6 +24,16 @@ export const routes: Routes = [
           import('./features/auth/register/register.page').then(m => m.RegisterPage)
       },
       {
+        path: 'advocate-register',
+        loadComponent: () =>
+          import('./features/auth/advocate-register/advocate-register.page').then(m => m.AdvocateRegisterPage)
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./features/auth/forgot-password/forgot-password.page').then(m => m.ForgotPasswordPage)
+      },
+      {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full'

@@ -43,6 +43,10 @@ export class RegisterPage {
   ) {}
 
   selectRole(role: 'client' | 'advocate'): void {
+    if (role === 'advocate') {
+      this.router.navigate(['/auth/advocate-register']);
+      return;
+    }
     this.selectedRole = role;
     this.currentStep = 'otp-request';
     this.errorMessage = '';
@@ -137,10 +141,6 @@ export class RegisterPage {
           this.cdr.detectChanges();
         }
       });
-    } else {
-      // Advocate registration requires file uploads — redirect to a note
-      this.loading = false;
-      this.errorMessage = 'Advocate registration requires document uploads. Please use the web portal or contact support.';
     }
   }
 
