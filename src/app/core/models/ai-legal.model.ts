@@ -40,6 +40,25 @@ export interface PrecedentEntry {
   [key: string]: string | undefined;
 }
 
+// ----- Legal Opinion Collaboration -----
+
+export interface OpinionComment {
+  id: string;
+  opinion_id: string;
+  author_id: string;
+  comment: string;
+  created_at: string;
+}
+
+export interface OpinionRevision {
+  id: string;
+  opinion_id: string;
+  revision_number: number;
+  changed_by: string | null;
+  changes_summary: string | null;
+  created_at: string;
+}
+
 // ----- Legal Opinion -----
 
 export interface LegalOpinionResponse {
@@ -73,4 +92,6 @@ export interface LegalOpinionResponse {
   created_at: string;
   updated_at: string | null;
   approved_at: string | null;
+  // Collaboration
+  comments?: OpinionComment[];
 }

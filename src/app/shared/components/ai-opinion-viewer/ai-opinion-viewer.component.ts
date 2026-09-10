@@ -5,7 +5,7 @@ import { Subject, timer, of } from 'rxjs';
 import { switchMap, takeUntil, catchError } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { LegalOpinionResponse } from '../../../core/models/ai-legal.model';
+import { LegalOpinionResponse, OpinionRevision, OpinionComment } from '../../../core/models/ai-legal.model';
 import { OpinionStatus, RiskLevel, RISK_LEVEL_LABELS, normalizeEnumValue } from '../../constants/ai-status.constants';
 
 /** Statuses that clients are allowed to see. Anything else is advocate-internal. */
@@ -45,6 +45,14 @@ export class AiOpinionViewerComponent implements OnInit, OnDestroy {
   editAdvocateOpinion = '';
   editAdvocateNotes = '';
   showOverwriteWarning = false;
+
+  // Collaboration Panel
+  activeCollabTab: 'comments' | 'history' = 'comments';
+  newCommentText = '';
+  isPostingComment = false;
+  revisions: OpinionRevision[] = [];
+  isLoadingHistory = false;
+  historyLoaded = false;
 
   private destroy$ = new Subject<void>();
 
@@ -289,6 +297,62 @@ export class AiOpinionViewerComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           alert('Failed to approve opinion: ' + (err.message || 'Unknown error'));
+        }
+      });
+  }
+
+  // ── Collaboration Panel ──
+
+  switchCollabTab(tab: 'comments' | 'history') {
+    this.activeCollabTab = tab;
+    if (tab === 'history' && !this.historyLoaded) {
+      this.loadHistory();
+    }
+  }
+
+  loadHistory() {
+    if (!this.opinion) return;
+    this.isLoadingHistory = true;
+    this.api.get<OpinionRevision[]>(`/opinions/${this.opinion.id}/history`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.revisions = res;
+          this.historyLoaded = true;
+          this.isLoadingHistory = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Failed to load history', err);
+          this.isLoadingHistory = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  postComment() {
+    if (!this.opinion || !this.newCommentText.trim()) return;
+    
+    this.isPostingComment = true;
+    const payload = { comment: this.newCommentText.trim() };
+
+    this.api.post<OpinionComment>(`/opinions/${this.opinion.id}/comments`, payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (newComment) => {
+          // Push to array to preserve unsaved changes in the main editor
+          if (!this.opinion!.comments) {
+            this.opinion!.comments = [];
+          }
+          this.opinion!.comments.push(newComment);
+          this.newCommentText = '';
+          this.isPostingComment = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          alert('Failed to post comment: ' + (err.message || 'Unknown error'));
+          this.isPostingComment = false;
+          this.cdr.detectChanges();
         }
       });
   }

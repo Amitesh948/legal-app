@@ -1,5 +1,6 @@
 .ai-opinion-section {
   margin-top: 0;
+  padding-bottom: 80px; /* Prevent bottom nav bar from cutting off the panel */
 }
 
 /* Approved Opinion Document Header */
@@ -258,4 +259,98 @@
     border-color: var(--color-brand, #6366f1);
     box-shadow: 0 0 0 3px var(--color-brand-light, rgba(99, 102, 241, 0.12));
   }
+}
+
+/* ── Collaboration Panel ── */
+.collaboration-panel {
+  border: 1px solid var(--color-border);
+}
+
+.collab-header {
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: transparent;
+  border: none;
+  padding: var(--space-2) 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.tab-btn:hover {
+  color: var(--color-text-primary);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.comments-list {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-right: var(--space-2);
+}
+
+.comment-item {
+  background: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+.add-comment-box {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border-light);
+  padding-top: var(--space-3);
+}
+
+/* Timeline */
+.history-timeline {
+  display: flex;
+  flex-direction: column;
+  padding-left: var(--space-2);
+}
+
+.timeline-item {
+  position: relative;
+  padding-left: var(--space-5);
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  border: 2px solid var(--color-surface);
+  z-index: 2;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 14px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--color-border-light);
+  z-index: 1;
+}
+
+.timeline-item:last-child::before {
+  display: none;
 }
